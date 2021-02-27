@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strava.ImportToDatabase", "Strava.ImportToDatabase\Strava.ImportToDatabase.csproj", "{71548DD9-CAFA-48F2-B47D-62EFD6FC8A24}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strava.Core", "Strava.Core\Strava.Core.csproj", "{195112C1-4B15-40DA-A04A-C7182382C222}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strava.ExportToGoogleSheet", "Strava.ExportToGoogleSheet\Strava.ExportToGoogleSheet.csproj", "{6EBDA671-4D3F-4CCD-A280-D6D5E2C668BA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{71548DD9-CAFA-48F2-B47D-62EFD6FC8A24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71548DD9-CAFA-48F2-B47D-62EFD6FC8A24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71548DD9-CAFA-48F2-B47D-62EFD6FC8A24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71548DD9-CAFA-48F2-B47D-62EFD6FC8A24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{195112C1-4B15-40DA-A04A-C7182382C222}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{195112C1-4B15-40DA-A04A-C7182382C222}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{195112C1-4B15-40DA-A04A-C7182382C222}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{195112C1-4B15-40DA-A04A-C7182382C222}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EBDA671-4D3F-4CCD-A280-D6D5E2C668BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EBDA671-4D3F-4CCD-A280-D6D5E2C668BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EBDA671-4D3F-4CCD-A280-D6D5E2C668BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EBDA671-4D3F-4CCD-A280-D6D5E2C668BA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
