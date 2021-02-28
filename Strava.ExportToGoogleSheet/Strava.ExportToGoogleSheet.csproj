@@ -16,6 +16,13 @@
       <None Update="google-filedatastore\GoogleSheetCredentials.json\Google.Apis.Auth.OAuth2.Responses.TokenResponse-User">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
+      <None Update="GoogleSheetCredentials.json\Google.Apis.Auth.OAuth2.Responses.TokenResponse-User">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
+
+  <Target Name="CreateDatabaseSymbolicLink" AfterTargets="Build">
+    <Exec Command="CreateDatabaseSymbolicLink.sh" />
+  </Target>        
 
 </Project>

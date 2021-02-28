@@ -29,4 +29,8 @@
       </None>
     </ItemGroup>
 
+  <Target Name="CreateDatabaseSymbolicLink" AfterTargets="Build">
+    <Exec Command="CreateDatabaseSymbolicLink.sh"/>
+  </Target>    
+
 </Project>
