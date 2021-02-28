@@ -3,10 +3,9 @@ obj/
 /packages/
 riderModule.iml
 /_ReSharper.Caches/
-/Strava.ExportToGoogleSheet/google-filedatastore/*
 /.idea/*
 *.db
 .vs/
 Deployment/
 appsettings.json
-Scripts/
+GoogleSheetCredentials.json/
