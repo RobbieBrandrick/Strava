@@ -56,11 +56,13 @@ namespace Strava.Core.Services
         /// <summary>
         /// Add new activities to the database
         /// </summary>
-        private async Task AddOrUpdate(List<Activity> activities)
+        private async Task Add(List<Activity> activities)
         {
 
             var existingIds = _dbContext.Activities.Select(e => e.Id);
 
+            activities = activities.Where(e => !existingIds.Contains(e.Id)).ToList();
+            
             foreach (var activity in activities)
             {
                 _dbContext.Entry(activity).State =
@@ -85,7 +87,7 @@ namespace Strava.Core.Services
             
             List<Activity> activities = activityDtos.ToDomain();
             
-            await AddOrUpdate(activities);
+            await Add(activities);
             
         }
 

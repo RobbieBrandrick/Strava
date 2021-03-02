@@ -38,6 +38,13 @@ namespace Strava.Core.Services
 
             List<ActivityDto> activities = await _stravaClientService.Execute<List<ActivityDto>>(request);
 
+            if (activities.Any(e => string.IsNullOrWhiteSpace(e.id) || e.id == "0"))
+            {
+                
+                throw new InvalidOperationException("Activity API Error: Activity Id is zero. Likely, too many requests were made");
+                
+            }
+
             return activities;
         }
 

@@ -38,6 +38,8 @@ namespace Strava.Core.Services
         public async Task<T> Execute<T>(RestRequest request, bool includeToken = true)
         {
 
+            ThrowWhenMaxRequestsExceeded();
+            
             var client = new RestClient(BaseUrl);
 
             if (includeToken)
@@ -154,5 +156,35 @@ namespace Strava.Core.Services
             await _tokenService.Add(_token);
 
         }
+
+        private void ThrowWhenMaxRequestsExceeded()
+        {
+            
+            var oneDayAgo = DateTime.Today.AddDays(-1);
+
+            IQueryable<StravaApiTransaction> transactions = _transactionService.GetAll().Where(e => e.CreateDate >= oneDayAgo);
+
+            if (transactions.Count() >= 1000)
+            {
+                
+                throw new InvalidOperationException(
+                    "Cannot query Strava API: Over 1000 transactions were made in the last day.");
+                
+            }
+            
+            var fifteenMinutesAgo = DateTime.Today.AddMinutes(-15);
+            
+            transactions = _transactionService.GetAll().Where(e => e.CreateDate >= fifteenMinutesAgo);
+            
+            if (transactions.Count() >= 100)
+            {
+                
+                throw new InvalidOperationException(
+                    "Cannot query Strava API: Over 100 transactions were made in the last 15 minutes");
+                
+            }
+
+        }
+        
     }
 }

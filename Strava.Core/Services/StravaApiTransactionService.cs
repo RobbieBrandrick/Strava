@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Strava.Core.Data;
 using Strava.Core.Models;
@@ -8,6 +9,8 @@ namespace Strava.Core.Services
     public interface IStravaApiTransactionService
     {
         Task Add(string resource, string request, string response);
+
+        IQueryable<StravaApiTransaction> GetAll();
     }
 
     public class StravaApiTransactionService : IStravaApiTransactionService
@@ -18,7 +21,7 @@ namespace Strava.Core.Services
         {
             _dbContext = dbContext;
         }
-        
+
         public async Task Add(string resource, string request, string response)
         {
 
@@ -35,6 +38,13 @@ namespace Strava.Core.Services
             await _dbContext.SaveChangesAsync();
 
         }
-        
-    }
+
+        public IQueryable<StravaApiTransaction> GetAll()
+        {
+            
+            return _dbContext.StravaApiTransactions;
+            
+        }
+
+}
 }

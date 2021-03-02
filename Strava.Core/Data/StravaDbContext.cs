@@ -25,7 +25,7 @@ namespace Strava.Core.Data
         {
             
             base.OnConfiguring(optionsBuilder);
-
+            optionsBuilder.EnableSensitiveDataLogging();
             optionsBuilder.UseSqlite(_connectionStrings.StravaDb);
             
         }
