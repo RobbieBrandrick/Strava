@@ -1,2 +1,0 @@
-./CreateDeploymentDirectory.sh
-./CopyDeploymentToLocalCronFolder.sh

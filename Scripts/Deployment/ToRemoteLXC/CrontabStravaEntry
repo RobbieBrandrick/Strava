@@ -1,0 +1,1 @@
+#* */2 * * * /usr/bin/Strava/CrontabStravaProcess.sh >> /usr/bin/Strava/CrontabStravaProcessLog 2>&1
