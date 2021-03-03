@@ -11,7 +11,7 @@ ImportToDatabaseFrom=$Root/Strava.ImportToDatabase/bin/Debug/net5.0/
 ExportToGoogleSheetTo=$Bin/ExportToGoogleSheet/
 ExportToGoogleSheetFrom=$Root/Strava.ExportToGoogleSheet/bin/Debug/net5.0/
 
-echo "Setting Up Deployment"
+echo "Setting Up Deployment Folder"
 
 dotnet build "$Root"
 

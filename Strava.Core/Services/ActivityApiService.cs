@@ -53,13 +53,14 @@ namespace Strava.Core.Services
             List<ActivityDto> activityDtos = new List<ActivityDto>();
             List<ActivityDto> response;
             var pageIndex = 1;
+            var pageSize = 1;
 
             do
             {
-                response = await GetActivities(100, pageIndex++, after: after);
+                response = await GetActivities(pageSize, pageIndex++, after: after);
 
                 activityDtos.AddRange(response);
-            } while (response.Any());
+            } while (response.Count() == pageSize);
 
             return activityDtos;
         }

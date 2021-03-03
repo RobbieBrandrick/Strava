@@ -6,6 +6,6 @@ riderModule.iml
 /.idea/*
 *.db
 .vs/
-/Deployment/
+/Added api call throttling error handling for when we call the strava api too muchDeployment/
 appsettings.json
 GoogleSheetCredentials.json/
