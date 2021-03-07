@@ -63,13 +63,21 @@
     <section v-else>
 
         <div v-if="loading">Loading...</div>
-        
-        <select v-model="selectedActivityType"> 
-            <option v-bind:value="activityTypes"></option>
-        </select>
+
+        <form id="search">
+
+            <select v-model="selectedActivityType">
+                <option :selected="true">All</option>
+                <option v-for="type in activityTypes" v-bind:value="type">{{type}}</option>
+            </select>
+
+            <input name="fromDate" v-model="fromDate" type="date" placeholder="From Date"/>
+            <input name="throughDate" v-model="throughDate" type="date" placeholder="Through Date"/>
+
+        </form>
 
         <activities-grid
-            :data="activities"
+            :data="filteredActivities"
             :columns="columns">
         </activities-grid>
 
@@ -83,7 +91,7 @@
             data: Array, 
             columns: Array
         },
-        data (){
+        data: function (){
             var sortOrders = {};
             this.columns.forEach(function(key) {
               sortOrders[key] = 1;
@@ -95,19 +103,19 @@
         },
         computed: {
             filteredData() {
-            var sortKey = this.sortKey;
-            var order = this.sortOrders[sortKey] || 1;
-            var data = this.data;
-            
-            if (sortKey) {
-              data = data.slice().sort(function(a, b) {
-                a = a[sortKey];
-                b = b[sortKey];
-                return (a === b ? 0 : a > b ? 1 : -1) * order;
-              });            
-            }            
-            
-            return data;
+                var sortKey = this.sortKey;
+                var order = this.sortOrders[sortKey] || 1;
+                var data = this.data;
+                
+                if (sortKey) {
+                  data = data.slice().sort(function(a, b) {
+                    a = a[sortKey];
+                    b = b[sortKey];
+                    return (a === b ? 0 : a > b ? 1 : -1) * order;
+                  });            
+                }            
+                
+                return data;
             
             }
         },
@@ -128,16 +136,53 @@
             return {
                 columns: ["id", "type", "name", "localDate", "utcDate", "timezone", "movingTime", "elapsedTime", "distance", "averageSpeed", "maxSpeed", "elevationGain", "elevationHigh", "elevationLow"],
                 activities: null,
+                cachedActivities: null,
                 loading: true,
                 errored: false,
                 activityTypes: [],
-                selectedActivityType: "All"
+                selectedActivityType: "All",
+                fromDate: null,
+                throughDate: null,               
+            }
+        },
+        methods: {
+            changeType(type) {      
+              let selectedValue = this.selectedActivityType;                
+              this.activities = this.cachedActivities.filter(activity => activity.type === selectedValue);
+            }
+        },
+        computed:{
+            filteredActivities(){
+
+                this.activities = this.cachedActivities;
+                
+                let selectedValue = this.selectedActivityType;               
+                
+                if (selectedValue && selectedValue !== "All") {                
+                    this.activities = this.activities.filter(activity => activity.type === selectedValue);
+                }
+                
+                let fromDate = this.fromDate
+                
+                if (fromDate){
+                    this.activities = this.activities.filter(activity => activity.localDate.substr(0, 10) >= fromDate);
+                }
+                
+                let throughDate = this.throughDate;
+                
+                if (throughDate){
+                    this.activities = this.activities.filter(activity => activity.localDate.substr(0, 10) <= throughDate);
+                }                
+                
+                return this.activities;
+                
             }
         },
         mounted: function (){
             axios.get('https://localhost:5001/Activity', { crossdomain: true })
                 .then(response =>{
                         
+                        this.cachedActivities = response.data;
                         this.activities = response.data
                         
                         let types = this.activities.map( e => e.type);                        
