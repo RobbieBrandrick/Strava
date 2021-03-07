@@ -7,34 +7,43 @@ namespace Strava.Core.Services
 {
     public static class ServiceProvider
     {
-        
-        private static readonly Microsoft.Extensions.DependencyInjection.ServiceProvider Provider;
+        private static Microsoft.Extensions.DependencyInjection.ServiceProvider _provider;
 
         static ServiceProvider()
         {
             
-            Provider = SetUp();
-            
         }
-
 
         public static T Get<T>()
         {
 
-            T service = Provider.GetService<T>();
+            if (_provider == null)
+            {
+                
+                _provider = SetUpServiceProvider();
+                
+            }
+            
+            T service = _provider.GetService<T>();
 
             return service;
-
+            
         }
 
-        private static Microsoft.Extensions.DependencyInjection.ServiceProvider SetUp()
+        public static IConfiguration GetConfiguration()
         {
-            
             IConfiguration configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", false, true)
                 .Build();
 
-            Microsoft.Extensions.DependencyInjection.ServiceProvider serviceProvider = new ServiceCollection()
+            return configuration;
+
+        }
+
+        public static IServiceCollection GetServiceCollection(IConfiguration configuration)
+        {
+            
+            IServiceCollection collection = new ServiceCollection()
                 .Configure<ConnectionStrings>(configuration.GetSection(ConnectionStrings.ConfigSection))
                 .Configure<StravaClientSettings>(configuration.GetSection(StravaClientSettings.ConfigSection))
                 .Configure<GoogleSheetServiceSettings>(configuration.GetSection(GoogleSheetServiceSettings.ConfigSection))
@@ -47,12 +56,24 @@ namespace Strava.Core.Services
                 .AddScoped<IActivityService, ActivityService>()
                 .AddScoped<IImportStravaDataToDatabaseService, ImportStravaDataToDatabaseService>()
                 .AddScoped<IGoogleSheetService, GoogleSheetService>()
-                .AddScoped<IExportStravaDataToGoogleSheetService, ExportStravaDataToGoogleSheetService>() 
-                .BuildServiceProvider();
+                .AddScoped<IExportStravaDataToGoogleSheetService, ExportStravaDataToGoogleSheetService>();
+
+            return collection;
             
+        }
+        
+
+        private static Microsoft.Extensions.DependencyInjection.ServiceProvider SetUpServiceProvider()
+        {
+
+            IConfiguration configuration = GetConfiguration();
+            IServiceCollection serviceCollection = GetServiceCollection(configuration);
+            
+            Microsoft.Extensions.DependencyInjection.ServiceProvider serviceProvider =
+                serviceCollection.BuildServiceProvider();
+
             return serviceProvider;
             
-        }        
-        
+        }
     }
 }

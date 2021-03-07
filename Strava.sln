@@ -6,6 +6,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strava.Core", "Strava.Core\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strava.ExportToGoogleSheet", "Strava.ExportToGoogleSheet\Strava.ExportToGoogleSheet.csproj", "{6EBDA671-4D3F-4CCD-A280-D6D5E2C668BA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strava.API", "Strava.API\Strava.API.csproj", "{2221650A-AF0B-4C2F-AE07-E903A79D3C19}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strava.Web", "Strava.Web\Strava.Web.csproj", "{5077CB6B-55C0-48AB-927F-BF73106D9539}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +28,13 @@ Global
 		{6EBDA671-4D3F-4CCD-A280-D6D5E2C668BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6EBDA671-4D3F-4CCD-A280-D6D5E2C668BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6EBDA671-4D3F-4CCD-A280-D6D5E2C668BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2221650A-AF0B-4C2F-AE07-E903A79D3C19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2221650A-AF0B-4C2F-AE07-E903A79D3C19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2221650A-AF0B-4C2F-AE07-E903A79D3C19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2221650A-AF0B-4C2F-AE07-E903A79D3C19}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5077CB6B-55C0-48AB-927F-BF73106D9539}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5077CB6B-55C0-48AB-927F-BF73106D9539}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5077CB6B-55C0-48AB-927F-BF73106D9539}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5077CB6B-55C0-48AB-927F-BF73106D9539}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
