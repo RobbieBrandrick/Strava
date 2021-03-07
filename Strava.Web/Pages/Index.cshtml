@@ -17,20 +17,143 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://unpkg.com/vue"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
+<script type="text/x-template" id="grid-template">
+    <table class="table table-hover table-hover table-bordered table-responsive ">
+        <thead class="table-dark">
+        <tr>
+            <th v-for="key in columns"
+                @@click="sortBy(key)"
+                @*:class="{ 'bg-danger': sortKey == key }"*@
+            >
+                {{ key | capitalize }}
+              <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'">
+              
+              <svg  v-if="sortKey == key && sortOrders[key] > 0" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"/>
+              </svg>
+              
+                <svg   v-if="sortKey == key && sortOrders[key] < 0"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"/>
+                </svg>        
+              
+              </span>                
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="entry in filteredData">
+            <td v-for="key in columns">
+                {{ entry[key] }}
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</script>
+
+<div id="activitiesGrid">
+
+    <section v-if="errored">
+        <p>We're sorry, we're not able to retrieve this information at the moment, please try back later</p>
+    </section>
+
+    <section v-else>
+
+        <div v-if="loading">Loading...</div>
+        
+        <select v-model="selectedActivityType"> 
+            <option v-bind:value="activityTypes"></option>
+        </select>
+
+        <activities-grid
+            :data="activities"
+            :columns="columns">
+        </activities-grid>
+
+    </section>
+</div>
 <script>
-        $(function () {
 
+    Vue.component("activities-grid", {
+        template:"#grid-template",
+        props: {
+            data: Array, 
+            columns: Array
+        },
+        data (){
+            var sortOrders = {};
+            this.columns.forEach(function(key) {
+              sortOrders[key] = 1;
+            });
+            return {
+              sortKey: "",
+              sortOrders: sortOrders
+            };  
+        },
+        computed: {
+            filteredData() {
+            var sortKey = this.sortKey;
+            var order = this.sortOrders[sortKey] || 1;
+            var data = this.data;
+            
+            if (sortKey) {
+              data = data.slice().sort(function(a, b) {
+                a = a[sortKey];
+                b = b[sortKey];
+                return (a === b ? 0 : a > b ? 1 : -1) * order;
+              });            
+            }            
+            
+            return data;
+            
+            }
+        },
+        filters: {
+          capitalize: str => str.charAt(0).toUpperCase() + str.slice(1)
+        },
+        methods: {
+          sortBy(key) {
+            this.sortKey = key;
+            this.sortOrders[key] = this.sortOrders[key] * -1;
+          }            
+        }
+    });
+    
+    var activitiesGrid = new Vue({
+        el: "#activitiesGrid",
+        data() {
+            return {
+                columns: ["id", "type", "name", "localDate", "utcDate", "timezone", "movingTime", "elapsedTime", "distance", "averageSpeed", "maxSpeed", "elevationGain", "elevationHigh", "elevationLow"],
+                activities: null,
+                loading: true,
+                errored: false,
+                activityTypes: [],
+                selectedActivityType: "All"
+            }
+        },
+        mounted: function (){
             axios.get('https://localhost:5001/Activity', { crossdomain: true })
-                .then(function (response) {
-                    console.log(response);
+                .then(response =>{
+                        
+                        this.activities = response.data
+                        
+                        let types = this.activities.map( e => e.type);                        
+                        let uniqueTypes = [...new Set(types)];
+                        
+                        uniqueTypes.push('All');
+                        
+                        this.activityTypes = uniqueTypes;
+                        
+                    })
+                .catch(error => {
+                    console.info(error)
+                    this.errored = true;
                 })
-                .catch(function (error) {
-                    console.log(error);
-                })
-                .then(function () {
-                    // always executed
-                });
+                .finally(() => this.loading = false);                
+        }
+    });
 
-        });
 </script>
