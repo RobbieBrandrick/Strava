@@ -1,0 +1,58 @@
+<template id="cardio-chart">
+    <div>
+        <canvas id="chart"></canvas>
+    </div>
+</template>
+
+<script>
+
+Vue.component("cardio-chart", {
+        template: "#cardio-chart",
+        data() {
+            return {
+                activitiesState: activitiesStore.state,
+                data: activitiesStore.state.data, 
+            }
+        },
+        watch: {
+            data(){
+                this.renderChart();    
+            }
+        },
+        methods: {
+            renderChart(){
+
+                let data = this.activitiesState.data;
+
+                data = data.filter( e => e.type === 'Run');
+
+                data = data.sort((a, b) => {                    
+                    a = a["localDate"];
+                    b = b["localDate"];                    
+                    return (a === b ? 0 : a > b ? 1 : -1);                    
+                });
+
+                let dates = data.map(e => e.localDate.substr(0, 10));
+                let distances = data.map(e => e.distance);
+                
+                let ctx = document.getElementById("chart").getContext("2d");
+                let chart = new Chart(ctx, {
+                    // The type of chart we want to create
+                    type: 'line',
+                    data: {
+                        labels: dates,
+                        datasets:[{
+                            label: "Distances",
+                            data: distances
+                        }]
+                    },
+                    options: {
+
+                    },
+                 });
+
+            }
+        }
+    });
+
+</script>

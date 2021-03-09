@@ -1,4 +1,4 @@
-<template id="activities-dashboard">
+<template id="activities-gridview">
 
     <div id="activitiesGrid" class="card">
         <div class="card-header font-weight-bold" >
@@ -52,8 +52,8 @@
 </template>
 
 <script>
-Vue.component("activities-dashboard", {
-        template: "#activities-dashboard",
+Vue.component("activities-gridview", {
+        template: "#activities-gridview",
         data() {
             return {
                 activitiesState: activitiesStore.state,  
