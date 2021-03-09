@@ -4,283 +4,31 @@
     ViewData["Title"] = "Home page";
 }
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"
-        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script src="https://unpkg.com/vue"></script>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
-<script src="https://unpkg.com/vue-chartjs/dist/vue-chartjs.min.js"></script>
+@section Scripts
+{
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 
-<script type="text/x-template" id="grid-template">
-    <div>
-        <table class="table table-hover table-hover table-bordered table-responsive ">
-            <thead class="table-primary">
-            <tr>
-                <th v-for="key in columns"
-                    @@click="sortBy(key)"
-                >
-                    {{ key | capitalize }}
-                  <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'">
-                  
-                  <svg  v-if="sortKey == key && sortOrders[key] > 0" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down float-right" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"/>
-                  </svg>
-                  
-                    <svg   v-if="sortKey == key && sortOrders[key] < 0"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up float-right" viewBox="0 0 16 16">
-                      <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"/>
-                    </svg>        
-                  
-                  </span>                
-                </th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-for="entry in filteredData">
-                <td v-for="key in columns">
-                    {{ entry[key] }}
-                </td>
-            </tr>
-            </tbody>
-        </table>
-        <nav class="d-flex justify-content-center mb-2" aria-label="Page navigation example">
-          <ul class="pagination">
-            <li class="page-item">
-              <button class="btn btn-primary mr-1"  aria-label="Previous" :disabled="page <= 1" @@click="updatePage(page - 1)">
-                <span aria-hidden="true">&laquo;</span>
-                <span class="sr-only">Previous</span>
-              </button>
-            </li>
-            <li class="page-item" v-for="pageNumber in getPageNumbers">
-                <button class="btn btn-primary mr-1" :disabled="page === pageNumber" @@click="updatePage(pageNumber)"> {{ pageNumber }} </button>
-            </li>
-            <li class="page-item">
-              <button class="btn btn-primary mr-1" aria-label="Next" :disabled="page >= numberOfPages" @@click="updatePage(page + 1)">
-                <span aria-hidden="true">&raquo;</span>
-                <span class="sr-only">Next</span>
-              </button>
-            </li>    
-          </ul>
-        </nav>  
-    </div>
-</script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
-<script type="text/x-template" id="activities-dashboard">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
-    <div id="activitiesGrid" class="card">
-        <div class="card-header font-weight-bold" >
-            Review your activities
-        </div>
-        <div class="card-body">
-        
-            <section v-if="errored">
-                <p>We're sorry, we're not able to retrieve this information at the moment, please try back later</p>
-            </section>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 
-            <section v-else>
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+    <script src="https://unpkg.com/vue-chartjs/dist/vue-chartjs.min.js"></script>
+    
+    <script src="~/js/ActivitiesDashboard/activitiesStore.js"> </script>
 
-                <div v-if="loading">Loading...</div>
+    @Html.Partial("StravaDashboard/Components/GridView")
+    @Html.Partial("StravaDashboard/Components/ActivitiesDashboard")
+    @Html.Partial("StravaDashboard/Pages/StravaDashboard")
 
-                <form id="search">
-        
-                    <div class="form-row">
-
-                        <div class="form-group col-md-3">
-                            <label for="activityType">Type</label>
-                            <select id="activityType" class="form-control" v-model="selectedActivityType">
-                                <option :selected="true">All</option>
-                                <option v-for="type in activityTypes" v-bind:value="type">{{type}}</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group col-md-3">
-                            <label for="activityFromDate">From Date</label>
-                            <input id="activityFromDate" class="form-control" name="fromDate" v-model="fromDate" type="date" placeholder="From Date"/>
-                        </div>
-                        
-                        <div class="form-group col-md-3">
-                            <label for="activityThroughDate">Through Date</label>
-                            <input id="activityThroughDate" class="form-control" name="throughDate" v-model="throughDate" type="date" placeholder="Through Date"/>
-                        </div>
-                        
-                    </div>
-
-                </form>
-
-                <gridview
-                    :data="filteredActivities"
-                    :columns="columns">
-                </gridview>
-
-            </section>
-        </div>
-    </div>
-
-</script>
-
-<div id="strava">
-    <div class="text-center">
-        <h1 class="display-4">Dashboard</h1>
-    </div>
-    <activities-dashboard>
-        :activities="activities"
-    </activities-dashboard>
-
-</div>
-
+}
 <script>
-
-    Vue.component("gridview", {
-        template:"#grid-template",
-        props: {
-            data: Array, 
-            columns: Array,
-            startPage: {
-                type: Number,
-                default: 1  
-            },
-            perPage: {
-                type: Number,
-                default: 5
-            },
-        },
-        data: function (){
-            let sortOrders = {};
-            this.columns.forEach(function(key) {
-              sortOrders[key] = 1;
-            });
-            return {
-              sortKey: "",
-              sortOrders: sortOrders,
-              page: this.startPage,
-              numberOfPages: 0,
-            };  
-        },
-        computed: {
-            filteredData() {
-                
-                let data = this.data;
-                let sortKey = this.sortKey;
-                let order = this.sortOrders[sortKey] || 1;                
-                
-                if (sortKey) {
-                  data = data.slice().sort(function(a, b) {
-                    a = a[sortKey];
-                    b = b[sortKey];
-                    return (a === b ? 0 : a > b ? 1 : -1) * order;
-                  });            
-                }
-                
-                data = this.paginate(data);
-                
-                return data;
-            
-            },
-            getPageNumbers() {            
-                
-                let data = this.data;                
-                let pages = []      
-                let delta = 3;
-                this.numberOfPages = Math.ceil(data.length / this.perPage);
-                
-                for (let i = this.page - delta; i <= this.page + delta; i++){
-                    if (i >= 1 && i <= this.numberOfPages){
-                        pages.push(i);    
-                    }
-                }
-                
-                return pages;                
-            }           
-        },
-        filters: {
-          capitalize: str => str.charAt(0).toUpperCase() + str.slice(1)
-        },
-        methods: {
-          sortBy(key) {
-            this.sortKey = key;
-            this.sortOrders[key] = this.sortOrders[key] * -1;
-          },
-		  paginate(data) {
-			let page = this.page;
-			let perPage = this.perPage;
-			let from = (page * perPage) - perPage;
-			let to = (page * perPage);
-			return  data.slice(from, to);
-		  },
-          updatePage(value){
-            this.page = value;
-          } 		  
-        }
-    });
-    
-    Vue.component("activities-dashboard", {
-        template: "#activities-dashboard",
-        data() {
-            return {
-                activities: [],
-                loading: true,
-                errored: false,  
-                columns: ["id", "type", "name", "localDate", "utcDate", "timezone", "movingTime", "elapsedTime", "distance", "averageSpeed", "maxSpeed", "elevationGain", "elevationHigh", "elevationLow"],
-                activityTypes: [],
-                selectedActivityType: "All",
-                fromDate: null,
-                throughDate: null,      
-            }            
-        },
-        computed:{
-            filteredActivities(){
-
-                let activities = this.activities;
-                
-                let selectedValue = this.selectedActivityType;               
-                
-                if (selectedValue && selectedValue !== "All") {                
-                    activities = activities.filter(activity => activity.type === selectedValue);
-                }
-                
-                let fromDate = this.fromDate
-                
-                if (fromDate){
-                    activities = activities.filter(activity => activity.localDate.substr(0, 10) >= fromDate);
-                }
-                
-                let throughDate = this.throughDate;
-                
-                if (throughDate){
-                    activities = activities.filter(activity => activity.localDate.substr(0, 10) <= throughDate);
-                }                
-                
-                return activities;
-                
-            }
-        },
-        mounted: function (){
-            axios.get('https://localhost:5001/Activity', { crossdomain: true })
-                .then(response =>{
-                        
-                        this.activities = response.data
-                        
-                        let types = this.activities.map( e => e.type);                        
-                        let uniqueTypes = [...new Set(types)];
-                        
-                        uniqueTypes.push('All');
-                        
-                        this.activityTypes = uniqueTypes;
-                        
-                    })
-                .catch(error => {
-                    console.info(error)
-                    this.errored = true;
-                })
-                .finally(() => this.loading = false);                
-        }        
-    });
-    
-    let strava = new Vue({
-        el: "#strava"
-    });
-
+    import Jquery from "../wwwroot/lib/jquery/dist/jquery";
+    export default {
+        components: {Jquery}
+    }
 </script>
