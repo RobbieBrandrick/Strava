@@ -1,6 +1,60 @@
 <template id="cardio-chart">
-    <div>
-        <canvas id="chart"></canvas>
+    <div class="card">
+        <div class="card-header">
+            Review your running activities
+        </div>
+        <div class="card-body">
+
+            <form :id="'updateChart'+type">
+
+                <div class="form-row">
+
+                    <div class="form-group col-md-3">
+                        <label :for="'groupByDate'+type">Group By</label>
+                        <select :id="'groupByDate'+type" class="form-control" v-model="selectedGroupByDate">
+                            <option>Day</option>
+                            <option>Week</option>
+                            <option>Month</option>
+                            <option>Year</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-md-3">
+                        <label :for="'activityFromDate'+type">From Date</label>
+                        <input :id="'activityFromDate'+type"class="form-control" name="fromDate" v-model="fromDate" type="date" placeholder="From Date"/>
+                    </div>
+
+                    <div class="form-group col-md-3">
+                        <label :for="'activityThroughDate'+type">Through Date</label>
+                        <input :id="'activityThroughDate'+type" class="form-control" name="throughDate" v-model="throughDate" type="date" placeholder="Through Date"/>
+                    </div>
+
+                    <div class="form-group col-md-3">
+                        <label :for="'advancedSearch'+type"></label>
+                        <a data-toggle="collapse" :data-target="'#advancedSearch'+type+'CollapsePanel'" role="button" aria-expanded="false" :aria-controls="'advancedSearch'+type+'CollapsePanel'" @@click.stop="toggleAdvancedSearch()">
+                            Advanced Search
+                        </a>
+                    </div>
+
+                    <div class="collapse" :id="'advancedSearch'+type+'CollapsePanel'" v-bind:class="{ 'show': advancedSearch.show }">
+                        <div class="card card-body">
+
+                            <div v-for="column in advancedSearch.availableColumnsToGraph">
+                                <input type="checkbox" :id="'advancedSearch' + type + 'ColumnsToChart' + column" :value="column" v-model="advancedSearch.columnsToGraph" @@change="renderChart">
+                                <label :for="'advancedSearch' + type + 'ColumnsToChart' + column">{{ column }}</label>
+                            </div>
+                            
+                        </div>
+                        
+                    </div>
+
+                </div>
+
+            </form>
+
+            <canvas :id="'chart'+type"></canvas>
+
+        </div>
     </div>
 </template>
 
@@ -8,10 +62,23 @@
 
 Vue.component("cardio-chart", {
         template: "#cardio-chart",
+        props: {
+            type: String, 
+            groupData: Function
+        },
         data() {
             return {
                 activitiesState: activitiesStore.state,
                 data: activitiesStore.state.data, 
+                selectedGroupByDateValue: "Week",
+                fromDateValue: moment({year: moment().year(), month: '0', day: '1'}).format("YYYY-MM-DD"),
+                throughDateValue: null, 
+                chart: null,
+                advancedSearch: {
+                    show: false,
+                    columnsToGraph: ["distance", "movingTime"],
+                    availableColumnsToGraph: [ "distance", "movingTime", "elapsedTime", "elevationGain", "elevationHigh", "elevationLow" ],    
+                }
             }
         },
         watch: {
@@ -19,39 +86,122 @@ Vue.component("cardio-chart", {
                 this.renderChart();    
             }
         },
+        computed: {
+            selectedGroupByDate: {                
+                get(){                
+                    return this.selectedGroupByDateValue;
+                },
+                set(value){
+                    this.selectedGroupByDateValue = value;
+                    
+                    this.renderChart();    
+                }
+            },
+            fromDate: {                
+                get(){                
+                    return this.fromDateValue;
+                },
+                set(value){
+                    this.fromDateValue = value;
+                    
+                    this.renderChart();    
+                }
+            },
+            throughDate: {                
+                get(){                
+                    return this.throughDateValue;
+                },
+                set(value){
+                    this.throughDateValue = value;
+                    
+                    this.renderChart();    
+                }
+            },                               
+            // getColumnsToChart(){
+            //    
+            //     let columns = [];
+            //
+            //     const data = this.data;              
+            //    
+            //     if (data.length <= 0){
+            //         return columns;
+            //     }
+            //    
+            //     const activity = data[0];
+            //     const keys = Object.keys(data[0]);
+            //   
+            //     keys.forEach(key => {
+            //       
+            //         if (activity[key] && Number.isInteger(activity[key])){
+            //             columns.push(key);    
+            //         }
+            //        
+            //     });
+            //    
+            //     return columns;
+            //    
+            // },
+        },    
         methods: {
-            renderChart(){
+           renderChart(){
 
-                let data = this.activitiesState.data;
-
-                data = data.filter( e => e.type === 'Run');
-
-                data = data.sort((a, b) => {                    
-                    a = a["localDate"];
-                    b = b["localDate"];                    
-                    return (a === b ? 0 : a > b ? 1 : -1);                    
-                });
-
-                let dates = data.map(e => e.localDate.substr(0, 10));
-                let distances = data.map(e => e.distance);
+               let data = this.activitiesState.data;
+               data = data.filter( e => e.type === this.type);
+               
+               let fromDate = this.fromDateValue
                 
-                let ctx = document.getElementById("chart").getContext("2d");
-                let chart = new Chart(ctx, {
+                if (fromDate){
+                    data = data.filter(activity => activity.localDate.substr(0, 10) >= fromDate);
+                }
+                
+                let throughDate = this.throughDateValue;
+                
+                if (throughDate){
+                    data = data.filter(activity => activity.localDate.substr(0, 10) <= throughDate);
+                }
+                
+                let chartData = [];
+                let dates = new Set();
+                
+                for (const column of this.advancedSearch.columnsToGraph)
+                {
+                                
+                    const group = this.groupData(data, this.selectedGroupByDateValue, column);
+                    
+                    const columnDates = [ ...group.keys() ];
+                    const columnData = [ ...group.values() ];
+                    
+                    chartData.push({
+                        label: column,
+                        data: columnData
+                    });
+                    
+                    columnDates.forEach(e => {                        
+                        if (!dates.has(e)) dates.add(e)                        
+                    });
+                    
+                }
+                
+                if (this.chart) {
+                    this.chart.destroy();
+                }
+                
+                let ctx = document.getElementById("chart" + this.type).getContext("2d");
+                this.chart = new Chart(ctx, {
                     // The type of chart we want to create
                     type: 'line',
                     data: {
-                        labels: dates,
-                        datasets:[{
-                            label: "Distances",
-                            data: distances
-                        }]
+                        labels: [...dates],
+                        datasets: chartData
                     },
                     options: {
 
                     },
                  });
-
-            }
+           },
+           toggleAdvancedSearch(){
+                this.advancedSearch.show = !this.advancedSearch.show;
+           }
         }
     });
 

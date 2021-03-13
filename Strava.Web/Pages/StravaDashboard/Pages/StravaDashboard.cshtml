@@ -2,9 +2,9 @@
     <div class="text-center">
         <h1 class="display-4">Dashboard</h1>
     </div>
+
+    <activity-charts></activity-charts>
     
-    <cardio-chart></cardio-chart>
-   
     <activities-gridview></activities-gridview>
     
 </div>
@@ -13,7 +13,14 @@
 
     let strava = new Vue({
         el: "#strava",
-        mounted() {activitiesStore.loadActivities();}          
+        mounted() {activitiesStore.loadActivities();},
+        methods: {
+            
+            groupByDate(date, type) {
+            
+              return  runningActivityStore.groupByDate(date, type);
+            }
+            }
     });
 
 </script>
