@@ -36,7 +36,10 @@ namespace Strava.API
                     builder =>
                     {
                         builder.WithOrigins("https://localhost:5002",
-                            "https://localhost:5000");
+                            "https://localhost:5000",
+                            "https://localhost:8081",
+                            "http://localhost:8081"
+                            );
                     });
             });            
             
