@@ -65,11 +65,11 @@
 </template>
 
 <script>
-import activitiesStore from "../../store/activitiesStore.js";
-import GridView from "../../components/GridView.vue";
+import activitiesStore from '../../store/activitiesStore';
+import GridView from './GridView.vue';
 
 export default {
-  name: "ActivitiesGridView",
+  name: 'ActivitiesGridView',
   components: {
     GridView,
   },
@@ -77,22 +77,22 @@ export default {
     return {
       activitiesState: activitiesStore.state,
       columns: [
-        "id",
-        "type",
-        "name",
-        "localDate",
-        "utcDate",
-        "timezone",
-        "movingTime",
-        "elapsedTime",
-        "distance",
-        "averageSpeed",
-        "maxSpeed",
-        "elevationGain",
-        "elevationHigh",
-        "elevationLow",
+        'id',
+        'type',
+        'name',
+        'localDate',
+        'utcDate',
+        'timezone',
+        'movingTime',
+        'elapsedTime',
+        'distance',
+        'averageSpeed',
+        'maxSpeed',
+        'elevationGain',
+        'elevationHigh',
+        'elevationLow',
       ],
-      selectedActivityType: "All",
+      selectedActivityType: 'All',
       fromDate: null,
       throughDate: null,
     };
@@ -101,27 +101,23 @@ export default {
     filteredActivities() {
       let activities = this.activitiesState.data;
 
-      let selectedValue = this.selectedActivityType;
+      const selectedValue = this.selectedActivityType;
 
-      if (selectedValue && selectedValue !== "All") {
-        activities = activities.filter(
-          (activity) => activity.type === selectedValue
-        );
+      if (selectedValue && selectedValue !== 'All') {
+        activities = activities.filter((activity) => activity.type === selectedValue);
       }
 
-      let fromDate = this.fromDate;
+      const { fromDate } = this.fromDate;
 
       if (fromDate) {
-        activities = activities.filter(
-          (activity) => activity.localDate.substr(0, 10) >= fromDate
-        );
+        activities = activities.filter((activity) => activity.localDate.substr(0, 10) >= fromDate);
       }
 
-      let throughDate = this.throughDate;
+      const { throughDate } = this.throughDate;
 
       if (throughDate) {
         activities = activities.filter(
-          (activity) => activity.localDate.substr(0, 10) <= throughDate
+          (activity) => activity.localDate.substr(0, 10) <= throughDate,
         );
       }
 
