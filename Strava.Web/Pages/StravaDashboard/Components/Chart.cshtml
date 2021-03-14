@@ -1,0 +1,20 @@
+<template id="chart-template">
+    
+    <canvas :id="'chart' + id"></canvas>
+    
+</template>
+
+<script>
+
+Vue.component("chart-template",{
+    template: "#chart-template",
+    props: {
+        chartData: Object
+    }, 
+    data(){
+        return {
+            id: 
+        }
+    })
+
+</script>

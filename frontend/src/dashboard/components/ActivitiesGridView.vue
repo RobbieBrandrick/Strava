@@ -101,23 +101,18 @@ export default {
     filteredActivities() {
       let activities = this.activitiesState.data;
 
-      const selectedValue = this.selectedActivityType;
-
-      if (selectedValue && selectedValue !== 'All') {
-        activities = activities.filter((activity) => activity.type === selectedValue);
+      if (this.selectedActivityType && this.selectedActivityType !== 'All') {
+        activities = activities.filter((activity) => activity.type === this.selectedActivityType);
       }
 
-      const { fromDate } = this.fromDate;
-
-      if (fromDate) {
-        activities = activities.filter((activity) => activity.localDate.substr(0, 10) >= fromDate);
+      if (this.fromDate) {
+        activities = activities
+          .filter((activity) => activity.localDate.substr(0, 10) >= this.fromDate);
       }
 
-      const { throughDate } = this.throughDate;
-
-      if (throughDate) {
+      if (this.throughDate) {
         activities = activities.filter(
-          (activity) => activity.localDate.substr(0, 10) <= throughDate,
+          (activity) => activity.localDate.substr(0, 10) <= this.throughDate,
         );
       }
 

@@ -18,7 +18,7 @@ namespace Strava.API
     public class Startup
     {
         readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
-        
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -29,7 +29,6 @@ namespace Strava.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            
             services.AddCors(options =>
             {
                 options.AddPolicy(name: MyAllowSpecificOrigins,
@@ -38,11 +37,13 @@ namespace Strava.API
                         builder.WithOrigins("https://localhost:5002",
                             "https://localhost:5000",
                             "https://localhost:8081",
-                            "http://localhost:8081"
-                            );
+                            "http://localhost:8081",
+                            "http://localhost:8080",
+                            "http://localhost:8080"
+                        );
                     });
-            });            
-            
+            });
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -52,11 +53,8 @@ namespace Strava.API
 
             foreach (ServiceDescriptor descriptor in ServiceProvider.GetServiceCollection(Configuration))
             {
-                
                 services.Add(descriptor);
-
             }
-            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -68,7 +66,7 @@ namespace Strava.API
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Strava.API v1"));
             }
-            
+
             app.UseCors(MyAllowSpecificOrigins);
 
             app.UseHttpsRedirection();
