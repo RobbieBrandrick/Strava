@@ -1,13 +1,14 @@
 <template>
   <div class="card">
-    <div class="card-header">Review your running activities</div>
+    <div class="card-header"><slot /></div>
     <div class="card-body">
-      <form :id="'updateChart' + type">
+      <form :id="'updateChart' + ucid">
         <div class="form-row">
           <div class="form-group col-md-3">
-            <label :for="'groupByDate' + type">Group By</label>
+            <label :for="'groupByDate' + ucid">Group By</label>
             <select
-              :id="'groupByDate' + type"
+              :id="'groupByDate' + ucid"
+              @change="renderChart"
               class="form-control"
               v-model="selectedGroupByDate"
             >
@@ -19,9 +20,10 @@
           </div>
 
           <div class="form-group col-md-3">
-            <label :for="'activityFromDate' + type">From Date</label>
+            <label :for="'activityFromDate' + ucid">From Date</label>
             <input
-              :id="'activityFromDate' + type"
+              :id="'activityFromDate' + ucid"
+              @change="renderChart"
               class="form-control"
               name="fromDate"
               v-model="fromDate"
@@ -31,9 +33,10 @@
           </div>
 
           <div class="form-group col-md-3">
-            <label :for="'activityThroughDate' + type">Through Date</label>
+            <label :for="'activityThroughDate' + ucid">Through Date</label>
             <input
-              :id="'activityThroughDate' + type"
+              :id="'activityThroughDate' + ucid"
+              @change="renderChart"
               class="form-control"
               name="throughDate"
               v-model="throughDate"
@@ -43,13 +46,13 @@
           </div>
 
           <div class="form-group col-md-3">
-            <label :for="'advancedSearch' + type"></label>
+            <label :for="'advancedSearch' + ucid"></label>
             <a
               data-toggle="collapse"
-              :data-target="'#advancedSearch' + type + 'CollapsePanel'"
+              :data-target="'#advancedSearch' + ucid + 'CollapsePanel'"
               role="button"
               aria-expanded="false"
-              :aria-controls="'advancedSearch' + type + 'CollapsePanel'"
+              :aria-controls="'advancedSearch' + ucid + 'CollapsePanel'"
               @click.stop="toggleAdvancedSearch()"
             >
               Advanced Search
@@ -58,7 +61,7 @@
 
           <div
             class="collapse"
-            :id="'advancedSearch' + type + 'CollapsePanel'"
+            :id="'advancedSearch' + ucid + 'CollapsePanel'"
             v-bind:class="{ show: advancedSearch.show }"
           >
             <div class="card card-body">
@@ -68,13 +71,13 @@
               >
                 <input
                   type="checkbox"
-                  :id="'advancedSearch' + type + 'ColumnsToChart' + column"
+                  :id="'advancedSearch' + ucid + 'ColumnsToChart' + column"
                   :value="column"
                   v-model="advancedSearch.columnsToGraph"
                   @change="renderChart"
                 />
                 <label
-                  :for="'advancedSearch' + type + 'ColumnsToChart' + column"
+                  :for="'advancedSearch' + ucid + 'ColumnsToChart' + column"
                   >{{ column }}</label
                 >
               </div>
@@ -83,19 +86,24 @@
         </div>
       </form>
 
-      <canvas :id="chartId"></canvas>
+      <ChartView :chartData="chartData" />
     </div>
   </div>
 </template>
 
 <script>
 import moment from 'moment';
-import Chart from 'chart.js';
 
+import ucid from '../../mixins/ucid';
 import activitiesStore from '../../store/activitiesStore';
+import ChartView from './ChartView.vue';
 
 export default {
   name: 'CardioChart',
+  mixins: [ucid],
+  components: {
+    ChartView,
+  },
   props: {
     type: String,
     groupData: Function,
@@ -104,11 +112,10 @@ export default {
     return {
       activitiesState: activitiesStore.state,
       data: activitiesStore.state.data,
-      selectedGroupByDateValue: 'Week',
-      fromDateValue: moment({ year: moment().year(), month: '0', day: '1' }).format('YYYY-MM-DD'),
-      throughDateValue: null,
-      chart: null,
-      chartId: `cardioChart${this.type}`,
+      selectedGroupByDate: 'Week',
+      fromDate: moment({ year: moment().year(), month: '0', day: '1' }).format('YYYY-MM-DD'),
+      throughDate: null,
+      chartData: {},
       advancedSearch: {
         show: false,
         columnsToGraph: ['distance', 'movingTime'],
@@ -116,6 +123,8 @@ export default {
           'distance',
           'movingTime',
           'elapsedTime',
+          'averageSpeed',
+          'maxSpeed',
           'elevationGain',
           'elevationHigh',
           'elevationLow',
@@ -128,67 +137,17 @@ export default {
       this.renderChart();
     },
   },
-  computed: {
-    selectedGroupByDate: {
-      get() {
-        return this.selectedGroupByDateValue;
-      },
-      set(value) {
-        this.selectedGroupByDateValue = value;
-
-        this.renderChart();
-      },
-    },
-    fromDate: {
-      get() {
-        return this.fromDateValue;
-      },
-      set(value) {
-        this.fromDateValue = value;
-
-        this.renderChart();
-      },
-    },
-    throughDate: {
-      get() {
-        return this.throughDateValue;
-      },
-      set(value) {
-        this.throughDateValue = value;
-
-        this.renderChart();
-      },
-    },
-    getColumnsToChart() {
-      const columns = [];
-
-      if (this.data.length <= 0) {
-        return columns;
-      }
-
-      const activity = this.data[0];
-      const keys = Object.keys(this.data[0]);
-
-      keys.forEach((key) => {
-        if (activity[key] && Number.isInteger(activity[key])) {
-          columns.push(key);
-        }
-      });
-
-      return columns;
-    },
-  },
   methods: {
     renderChart() {
       let { data } = this.activitiesState;
       data = data.filter((e) => e.type === this.type);
 
-      if (this.fromDateValue) {
-        data = data.filter((activity) => activity.localDate.substr(0, 10) >= this.fromDateValue);
+      if (this.fromDate) {
+        data = data.filter((activity) => activity.localDate.substr(0, 10) >= this.fromDate);
       }
 
-      if (this.throughDateValue) {
-        data = data.filter((activity) => activity.localDate.substr(0, 10) <= this.throughDateValue);
+      if (this.throughDate) {
+        data = data.filter((activity) => activity.localDate.substr(0, 10) <= this.throughDate);
       }
 
       const chartData = [];
@@ -196,7 +155,7 @@ export default {
 
       for (let i = 0; i < this.advancedSearch.columnsToGraph.length; i += 1) {
         const column = this.advancedSearch.columnsToGraph[i];
-        const group = this.groupData(data, this.selectedGroupByDateValue, column);
+        const group = this.groupData(data, this.selectedGroupByDate, column);
 
         const columnDates = [...group.keys()];
         const columnData = [...group.values()];
@@ -211,12 +170,7 @@ export default {
         });
       }
 
-      if (this.chart) {
-        this.chart.destroy();
-      }
-
-      const ctx = document.getElementById(this.chartId).getContext('2d');
-      this.chart = new Chart(ctx, {
+      this.chartData = {
         // The type of chart we want to create
         type: 'line',
         data: {
@@ -224,7 +178,7 @@ export default {
           datasets: chartData,
         },
         options: {},
-      });
+      };
     },
     toggleAdvancedSearch() {
       this.advancedSearch.show = !this.advancedSearch.show;

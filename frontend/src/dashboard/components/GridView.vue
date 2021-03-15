@@ -3,7 +3,7 @@
     <table
       class="table table-hover table-hover table-bordered table-responsive"
     >
-      <thead class="table-primary">
+      <thead class="table-secondary">
         <tr>
           <th v-for="key in columns" :key="key" @click="sortBy(key)">
             {{ key | capitalize }}
@@ -19,8 +19,7 @@
               >
                 <path
                   fill-rule="evenodd"
-                  d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.
-                  708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"
+                  d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"
                 />
               </svg>
 
@@ -35,8 +34,7 @@
               >
                 <path
                   fill-rule="evenodd"
-                  d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.
-                  708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"
+                  d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"
                 />
               </svg>
             </span>
@@ -125,19 +123,27 @@ export default {
   computed: {
     filteredData() {
       let { data } = this;
+      const order = this.sortOrders[this.sortKey] || 1;
 
       if (this.sortKey) {
         data = data.slice().sort((a, b) => {
           const lhs = a[this.sortKey];
           const rhs = b[this.sortKey];
 
+          let result = 0;
+
           if (lhs === rhs) {
-            return 0;
+            result = 0;
           }
           if (lhs > rhs) {
-            return 1;
+            result = 1;
+          } else {
+            result = -1;
           }
-          return -1;
+
+          result *= order;
+
+          return result;
         });
       }
 
