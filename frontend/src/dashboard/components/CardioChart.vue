@@ -106,7 +106,6 @@ export default {
   },
   props: {
     type: String,
-    groupData: Function,
   },
   data() {
     return {
@@ -143,7 +142,7 @@ export default {
 
       for (let i = 0; i < this.advancedSearch.columnsToGraph.length; i += 1) {
         const column = this.advancedSearch.columnsToGraph[i];
-        const group = this.groupData(activities, this.selectedGroupByDate, column);
+        const group = this.$store.getters['activities/groupByDate'](activities, this.selectedGroupByDate, column);
 
         const columnDates = [...group.keys()];
         const columnData = [...group.values()];

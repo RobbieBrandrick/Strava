@@ -1,4 +1,5 @@
 import axios from 'axios';
+import moment from 'moment';
 
 export default {
   namespaced: true,
@@ -8,7 +9,41 @@ export default {
     errored: false,
     types: [],
   },
-  getters: {},
+  getters: {
+    groupByDate: (state, getters) => (data, type, key) => {
+      const result = new Map();
+
+      data.forEach((activity) => {
+        const date = activity.localDate.substr(0, 10);
+        const dateKey = getters.getDateKey(date, type);
+
+        if (!result.has(dateKey)) {
+          result.set(dateKey, 0);
+        }
+
+        const newDistance = result.get(dateKey) + activity[key];
+
+        result.set(dateKey, newDistance);
+      });
+
+      return result;
+    },
+    getDateKey: () => (dateStr, type) => {
+      const date = moment(dateStr);
+
+      if (type === 'Day') {
+        return date.format('YYYY-MM-DD');
+      } if (type === 'Week') {
+        return date.format('YYYY-wo');
+      } if (type === 'Month') {
+        return date.format('YYYY-MMMM');
+      } if (type === 'Year') {
+        return date.format('YYYY');
+      }
+
+      return null;
+    },
+  },
   mutations: {
     setActivities(state, activities) {
       const { data } = state;
