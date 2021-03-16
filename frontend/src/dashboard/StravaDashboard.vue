@@ -9,7 +9,6 @@
 </template>
 
 <script>
-import activitiesStore from '../store/activitiesStore';
 import ActivitiesGridView from './components/ActivitiesGridView.vue';
 import CardioCharts from './components/CardioCharts.vue';
 
@@ -21,9 +20,6 @@ export default {
   },
   data() {
     return {};
-  },
-  mounted() {
-    activitiesStore.loadActivities();
   },
 };
 </script>

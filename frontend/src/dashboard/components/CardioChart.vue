@@ -95,12 +95,12 @@
 import moment from 'moment';
 
 import ucid from '../../mixins/ucid';
-import activitiesStore from '../../store/activitiesStore';
+import getActivitiesMixin from './activities-mixin';
 import ChartView from './ChartView.vue';
 
 export default {
   name: 'CardioChart',
-  mixins: [ucid],
+  mixins: [ucid, getActivitiesMixin],
   components: {
     ChartView,
   },
@@ -110,8 +110,6 @@ export default {
   },
   data() {
     return {
-      activitiesState: activitiesStore.state,
-      data: activitiesStore.state.data,
       selectedGroupByDate: 'Week',
       fromDate: moment({ year: moment().year(), month: '0', day: '1' }).format('YYYY-MM-DD'),
       throughDate: null,
@@ -119,35 +117,25 @@ export default {
       advancedSearch: {
         show: false,
         columnsToGraph: ['distance', 'movingTime'],
-        availableColumnsToGraph: [
-          'distance',
-          'movingTime',
-          'elapsedTime',
-          'averageSpeed',
-          'maxSpeed',
-          'elevationGain',
-          'elevationHigh',
-          'elevationLow',
-        ],
+        availableColumnsToGraph: ['distance', 'movingTime', 'elapsedTime', 'averageSpeed', 'maxSpeed', 'elevationGain', 'elevationHigh', 'elevationLow'],
       },
     };
   },
-  watch: {
-    data() {
-      this.renderChart();
-    },
+  computed: {},
+  mounted() {
+    this.renderChart();
   },
   methods: {
     renderChart() {
-      let { data } = this.activitiesState;
-      data = data.filter((e) => e.type === this.type);
+      let { activities } = this;
+      activities = activities.filter((e) => e.type === this.type);
 
       if (this.fromDate) {
-        data = data.filter((activity) => activity.localDate.substr(0, 10) >= this.fromDate);
+        activities = activities.filter((activity) => activity.localDate.substr(0, 10) >= this.fromDate);
       }
 
       if (this.throughDate) {
-        data = data.filter((activity) => activity.localDate.substr(0, 10) <= this.throughDate);
+        activities = activities.filter((activity) => activity.localDate.substr(0, 10) <= this.throughDate);
       }
 
       const chartData = [];
@@ -155,7 +143,7 @@ export default {
 
       for (let i = 0; i < this.advancedSearch.columnsToGraph.length; i += 1) {
         const column = this.advancedSearch.columnsToGraph[i];
-        const group = this.groupData(data, this.selectedGroupByDate, column);
+        const group = this.groupData(activities, this.selectedGroupByDate, column);
 
         const columnDates = [...group.keys()];
         const columnData = [...group.values()];
