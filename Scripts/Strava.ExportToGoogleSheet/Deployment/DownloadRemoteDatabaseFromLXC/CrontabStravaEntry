@@ -1,0 +1,1 @@
+0 */2 * * * /usr/bin/Strava/DownloadRemoteDatabase.sh >> /usr/bin/Strava/DownloadRemoteDatabaseLog 2>&1
