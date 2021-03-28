@@ -1,0 +1,6 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Publish Strava.API to folder" type="DotNetFolderPublish" factoryName="Publish to folder">
+    <riderPublish runtime="linux-x64" target_folder="$PROJECT_DIR$/Strava.API/Deployment" target_framework="net5.0" uuid_high="2459357968081833007" uuid_low="-5906496184366842855" />
+    <method v="2" />
+  </configuration>
+</component>

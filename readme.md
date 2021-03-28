@@ -47,3 +47,10 @@ Here is an example of the required fields within in the appsetting.json file
 ```
 
 I set this process up as a cron job to automatically import my data into my spreadsheet. Alternatively, I can deploy this to a Linux Container and push it to a remote server to run (e.g., Digital Ocean)
+
+## Strava.API + Dashboard
+
+This project uses the database populated by Strava.ImportToDatabase to expose the data via a Web API to a hosted frontend application that contains charts and graphs of your Strava activities.
+
+### Setup in LXD container
+
