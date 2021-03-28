@@ -18,6 +18,14 @@ echo 'Setting up nginx'
 
 service nginx start
 
+if [ ! -d "/etc/nginx/sites-available"/ ]; then
+    mkdir "/etc/nginx/sites-available"
+fi
+
+if [ ! -d "/etc/nginx/sites-enabled"/ ]; then
+    mkdir "/etc/nginx/sites-enabled"
+fi
+
 echo "    server {
         listen        80;
         server_name   stravalocal.com *.stravalocal.com;
@@ -37,6 +45,8 @@ echo "    server {
         # listen [::]:80 default_server deferred;
         return   444;
     }" | tee /etc/nginx/sites-available/default
+
+ln -s -f /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
 
 nginx -t
 

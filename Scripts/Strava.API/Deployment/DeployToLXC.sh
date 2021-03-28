@@ -1,10 +1,10 @@
-ScriptFolder=/home/rob/storage/dev/Strava/Scripts/Strava.API/Deployment/ToLocalLXC
+Instance=$1
+ScriptFolder=/home/rob/storage/dev/Strava/Scripts/Strava.API/Deployment
 ProjectLocation=/home/rob/storage/dev/Strava/Strava.API
 DeployFromLocation=$ProjectLocation/Deployment
 DeploymentPackage=$ProjectLocation/Deployment.zip
 DeployToWWWLocation=/var/www
 DeployToLocation=$DeployToWWWLocation/StravaAPI
-Instance=StravaFrontend
 
 clear
 
@@ -40,4 +40,3 @@ echo "$Instance LXC Container has been set up"
 
 echo "Opening container in terminal"
 lxc exec $Instance -- bash -lc "cd $DeployToLocation && bash" 
-
