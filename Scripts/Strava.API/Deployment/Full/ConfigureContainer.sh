@@ -3,10 +3,8 @@ DeployToLocation=$DeployToWWWLocation/StravaAPI
 ExecStart=$DeployToLocation/Strava.API
 
 echo "Updating Container and adding required programs"
-echo "deb [trusted=yes] https://nginx.org/packages/ubuntu/ focal nginx" | tee -a /etc/apt/sources.list
-echo "deb-src [trusted=yes] https://nginx.org/packages/ubuntu/ focal  nginx" | tee -a /etc/apt/sources.list
-apt-get update
-apt-get -y install nano wget curl zip nginx=1.18.0-2~focal
+apt update
+apt -y install nano wget curl zip nginx
 
 wget https://dot.net/v1/dotnet-install.sh
 bash ./dotnet-install.sh -c Current -version latest --install-dir /usr/share/dotnet  --runtime dotnet
@@ -27,9 +25,37 @@ if [ ! -d "/etc/nginx/sites-enabled"/ ]; then
     mkdir "/etc/nginx/sites-enabled"
 fi
 
+##stravalocal.com
+# echo "    server {
+#         listen        80;
+#         server_name   stravalocal.com *.stravalocal.com;
+#         location / {
+#             proxy_pass         http://localhost:5000;
+#             proxy_http_version 1.1;
+#             proxy_set_header   Upgrade \$http_upgrade;
+#             proxy_set_header   Connection keep-alive;
+#             proxy_set_header   Host \$host;
+#             proxy_cache_bypass \$http_upgrade;
+#             proxy_set_header   X-Forwarded-For \$proxy_add_x_forwarded_for;
+#             proxy_set_header   X-Forwarded-Proto \$scheme;
+#         }
+#     }
+#     server {
+#         listen   80 default_server;
+#         # listen [::]:80 default_server deferred;
+#         return   444;
+#     }" | tee /etc/nginx/sites-available/default
+
+# ln -s -f /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
+
+# nginx -t
+
+# nginx -s reload
+# echo "127.0.0.1       stravalocal.com" | tee -a /etc/hosts
+
+#127.0.0.1
 echo "    server {
         listen        80;
-        server_name   stravalocal.com *.stravalocal.com;
         location / {
             proxy_pass         http://localhost:5000;
             proxy_http_version 1.1;
@@ -40,11 +66,6 @@ echo "    server {
             proxy_set_header   X-Forwarded-For \$proxy_add_x_forwarded_for;
             proxy_set_header   X-Forwarded-Proto \$scheme;
         }
-    }
-    server {
-        listen   80 default_server;
-        # listen [::]:80 default_server deferred;
-        return   444;
     }" | tee /etc/nginx/sites-available/default
 
 ln -s -f /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
@@ -52,8 +73,6 @@ ln -s -f /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
 nginx -t
 
 nginx -s reload
-
-echo "127.0.0.1       stravalocal.com" | tee -a /etc/hosts
 
 echo 'Starting Deployment'
 cd $DeployToLocation && $ExecStart > log &
@@ -64,7 +83,8 @@ sleep 5
 echo 'Testing Deployment'
 
 curl http://localhost:5000
-curl stravalocal.com
+curl 127.0.0.1
+# curl stravalocal.com
 
 echo 'Setting Up Deployment in systemd'
 

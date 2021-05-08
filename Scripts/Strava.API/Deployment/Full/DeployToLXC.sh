@@ -39,5 +39,7 @@ lxc exec $Instance -- bash /ConfigureContainer.sh
 
 echo "$Instance LXC Container has been set up"
 
+echo "Reminder: You may need to update the IP of the host: do:first ;)"
+
 echo "Opening container in terminal"
 lxc exec $Instance -- bash -lc "cd $DeployToLocation && bash" 
