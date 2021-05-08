@@ -14,11 +14,18 @@
     <ItemGroup>
         <ProjectReference Include="..\Strava.Core\Strava.Core.csproj" />
     </ItemGroup>
+    <Target Name="PublishDatabase" AfterTargets="ComputeFilesToPublish">  
+        <Exec Command="./PublishDatabase.sh" />
+    </Target>  
 
     <Target Name="CreateDatabaseSymbolicLink" AfterTargets="Build">
         <Exec Command="./CreateDatabaseSymbolicLink.sh" />
     </Target>
 
+    <Target Name="PublishDatabase" AfterTargets="ComputeFilesToPublish">
+        <Exec Command="./PublishDatabase.sh" />
+    </Target>
+    
     <PropertyGroup>
         <!-- Typescript/Javascript Client Configuration -->
         <SpaRoot>frontend\</SpaRoot>
@@ -52,9 +59,5 @@
             </ResolvedFileToPublish>
         </ItemGroup>
     </Target>
-
-    <Target Name="PublishDatabase" AfterTargets="ComputeFilesToPublish">  
-        <Exec Command="./PublishDatabase.sh" />
-    </Target>  
 
 </Project>

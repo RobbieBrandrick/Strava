@@ -9,12 +9,19 @@
         :columnsToGraph="columnsToGraph"
         @filterUpdated="filterUpdated"
       />
+      <CardioGraph
+        :fromDate="selectedFromDate"
+        :throughDate="selectedThroughDate"
+        :type="type"
+      />
       <CardioChart
         :groupByDate="groupByDate"
         :fromDate="fromDate"
         :throughDate="throughDate"
         :columnsToGraph="columnsToGraph"
+        :fillInDates="fillInDates"
         :type="type"
+        @chartLabelHoverChange="chartLabelHoverChange"
       />
     </div>
   </div>
@@ -28,6 +35,7 @@ import getActivitiesMixin from './activities-mixin';
 
 import CardioFilter from './CardioFilter.vue';
 import CardioChart from './CardioChart.vue';
+import CardioGraph from './CardioGraph.vue';
 
 export default {
   name: 'CardioView',
@@ -35,6 +43,7 @@ export default {
   components: {
     CardioFilter,
     CardioChart,
+    CardioGraph,
   },
   props: {
     type: String,
@@ -45,7 +54,18 @@ export default {
       fromDate: moment({ year: moment().year(), month: '0', day: '1' }).format('YYYY-MM-DD'),
       throughDate: null,
       columnsToGraph: ['distance', 'movingTime'],
+      fillInDates: false,
+      chartSelectedFromDate: null,
+      chartSelectedThroughDate: null,
     };
+  },
+  computed: {
+    selectedFromDate() {
+      return this.chartSelectedFromDate ?? this.fromDate;
+    },
+    selectedThroughDate() {
+      return this.chartSelectedThroughDate ?? this.throughDate;
+    },
   },
   methods: {
     filterUpdated(data) {
@@ -53,6 +73,11 @@ export default {
       this.fromDate = data.fromDate;
       this.throughDate = data.throughDate;
       this.columnsToGraph = data.columnsToGraph;
+      this.fillInDates = data.fillInDates;
+    },
+    chartLabelHoverChange(data) {
+      this.chartSelectedFromDate = data.fromDate;
+      this.chartSelectedThroughDate = data.throughDate;
     },
   },
 };

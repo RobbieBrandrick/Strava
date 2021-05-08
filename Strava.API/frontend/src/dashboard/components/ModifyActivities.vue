@@ -3,7 +3,7 @@
     <div class="card-header" @click="show = !show">
       Modify Activities
     </div>
-    <div class="card-body"  v-show="show">
+    <div class="card-body" v-show="show">
       <div class="form-row">
         <div class="form-group col-md-3">
           <label for="activityType">Type</label>

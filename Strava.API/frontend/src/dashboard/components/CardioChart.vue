@@ -1,5 +1,6 @@
 <template>
   <div>
+    <button @click="afterSelectedChartLabel">Refresh</button>
     <ChartView :chartData="renderChart" />
   </div>
 </template>
@@ -21,6 +22,7 @@ export default {
     throughDate: String,
     columnsToGraph: Array,
     type: String,
+    fillInDates: Boolean,
   },
   data() {
     return {
@@ -29,15 +31,19 @@ export default {
   },
   computed: {
     renderChart() {
-      let { activities } = this;
-      activities = activities.filter((e) => e.type === this.type);
+      const { activities } = this;
+      let activitiesResult = activities.filter((e) => e.type === this.type);
 
       if (this.fromDate) {
-        activities = activities.filter((activity) => activity.localDate.substr(0, 10) >= this.fromDate);
+        activitiesResult = activitiesResult.filter(
+          (activity) => activity.localDate.substr(0, 10) >= this.fromDate,
+        );
       }
 
       if (this.throughDate) {
-        activities = activities.filter((activity) => activity.localDate.substr(0, 10) <= this.throughDate);
+        activitiesResult = activitiesResult.filter(
+          (activity) => activity.localDate.substr(0, 10) <= this.throughDate,
+        );
       }
 
       const chartData = [];
@@ -45,14 +51,15 @@ export default {
 
       for (let i = 0; i < this.columnsToGraph.length; i += 1) {
         const column = this.columnsToGraph[i];
-        const group = this.groupBy()(activities, this.groupByDate, column);
+        const group = this.groupBy()(activitiesResult, this.groupByDate, column, this.fillInDates);
 
         const columnDates = [...group.keys()];
-        const columnData = [...group.values()];
+        const columnData = [...group.values()].map((e) => e.data);
 
         chartData.push({
           label: column,
           data: columnData,
+          raw: group,
         });
 
         columnDates.forEach((e) => {
@@ -70,35 +77,42 @@ export default {
           formatDistance: this.formatDistance(),
           formatSpeed: this.formatSpeed(),
           formatElevation: this.formatElevation(),
+          selectedChartLabel: this.selectedChartLabel,
+          afterSelectedChartLabel: this.afterSelectedChartLabel,
         },
         options: {
           tooltips: {
             callbacks: {
               label(tooltipItem, data) {
-                const datasetLabel = data.datasets[tooltipItem.datasetIndex].label;
-                const datapointValue = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                const dataset = data.datasets[tooltipItem.datasetIndex];
+                const dataSetLabel = dataset.label;
+                const toolTipValue = tooltipItem.value;
+                const toolTipLabel = tooltipItem.label;
+                const rawDataPoint = dataset.raw.get(toolTipLabel);
+
+                data.selectedChartLabel(rawDataPoint);
 
                 const time = ['movingTime', 'elapsedTime'];
-                if (time.includes(datasetLabel)) {
-                  return `${datasetLabel}: ${data.formatTime(datapointValue)}`;
+                if (time.includes(dataSetLabel)) {
+                  return `${dataSetLabel}: ${data.formatTime(toolTipValue)}`;
                 }
 
                 const distance = ['distance'];
-                if (distance.includes(datasetLabel)) {
-                  return `${datasetLabel}: ${data.formatDistance(datapointValue)}`;
+                if (distance.includes(dataSetLabel)) {
+                  return `${dataSetLabel}: ${data.formatDistance(toolTipValue)}`;
                 }
 
                 const speed = ['averageSpeed', 'maxSpeed'];
-                if (speed.includes(datasetLabel)) {
-                  return `${datasetLabel}: ${data.formatSpeed(datapointValue, data.cardioType)}`;
+                if (speed.includes(dataSetLabel)) {
+                  return `${dataSetLabel}: ${data.formatSpeed(toolTipValue, data.cardioType)}`;
                 }
 
                 const elevation = ['elevationGain', 'elevationHigh', 'elevationLow'];
-                if (elevation.includes(datasetLabel)) {
-                  return `${datasetLabel}: ${data.formatElevation(datapointValue)}`;
+                if (elevation.includes(dataSetLabel)) {
+                  return `${dataSetLabel}: ${data.formatElevation(toolTipValue)}`;
                 }
 
-                return datapointValue;
+                return toolTipValue;
               },
             },
           },
@@ -106,6 +120,19 @@ export default {
       };
 
       return result;
+    },
+  },
+  methods: {
+    selectedChartLabel(datapoint) {
+      const { dates } = datapoint;
+
+      const fromDate = dates.sort((lhs, rhs) => lhs > rhs)[0];
+      const throughDate = dates.sort((lhs, rhs) => lhs < rhs)[0];
+
+      this.$emit('chartLabelHoverChange', { fromDate, throughDate });
+    },
+    afterSelectedChartLabel() {
+      this.$emit('chartLabelHoverChange', { fromDate: null, throughDate: null });
     },
   },
 };

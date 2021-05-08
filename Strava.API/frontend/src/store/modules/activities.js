@@ -33,7 +33,10 @@ export default {
       });
       return activities;
     },
-    formatTime: () => (data) => moment.utc(data * 1000).format('HH:mm:ss'),
+    formatTime: (state, getters) => (data) => `${getters.formatHours(data)}:${getters.formatMinutes(data)}:${getters.formatSeconds(data)}`,
+    formatHours: () => (data) => Math.round((data / 60 / 60)).toString().padStart(2, '0'),
+    formatMinutes: () => (data) => Math.round((data / 60) % 60).toString().padStart(2, '0'),
+    formatSeconds: () => (data) => Math.round(data % 60).toString().padStart(2, '0'),
     formatDistance: () => (data) => `${(data / 1000).toFixed(2)} km`,
     formatRideSpeed: () => (data) => `${(data * 3.6).toFixed(2)} km/h`,
     formatRunSpeed: () => (data) => {
@@ -53,50 +56,83 @@ export default {
       return data;
     },
     formatElevation: () => (data) => `${Math.round(data, 2).toFixed(2)} m`,
-    groupByDate: (state, getters) => (data, type, column) => {
+    groupByDate: (state, getters) => (data, type, column, fillInDates) => {
       const averageColumns = ['maxSpeed', 'averageSpeed'];
 
-      if (averageColumns.includes(column)) {
-        return getters.groupByDateAvg(data, type, column);
+      const result = new Map();
+
+      if (fillInDates) {
+        getters.applyFillInDates(result, data, type);
       }
 
-      return getters.groupByDateSum(data, type, column);
+      if (averageColumns.includes(column)) {
+        getters.groupByDateAvg(result, data, type, column);
+      } else {
+        getters.groupByDateSum(result, data, type, column);
+      }
+      return result;
     },
-    groupByDateSum: (state, getters) => (data, type, column) => {
-      const result = new Map();
-
+    groupByDateSum: (state, getters) => (result, data, type, column) => {
       data.forEach((activity) => {
         const date = activity.localDate.substr(0, 10);
         const dateKey = getters.getDateKey(date, type);
 
         if (!result.has(dateKey)) {
-          result.set(dateKey, 0);
+          result.set(dateKey, { data: 0, dates: [] });
         }
 
-        const newSum = result.get(dateKey) + activity[column];
+        const record = result.get(dateKey);
 
-        result.set(dateKey, newSum);
+        record.data += activity[column];
+        record.dates.push(date);
+
+        result.set(dateKey, record);
       });
 
       return result;
     },
-    groupByDateAvg: (state, getters) => (data, type, column) => {
-      const result = new Map();
-
+    groupByDateAvg: (state, getters) => (result, data, type, column) => {
       data.forEach((activity) => {
         const date = activity.localDate.substr(0, 10);
         const dateKey = getters.getDateKey(date, type);
 
         if (!result.has(dateKey)) {
-          result.set(dateKey, activity[column]);
+          result.set(dateKey, { data: activity[column], dates: [] });
         }
 
-        const newAvg = ((result.get(dateKey) + activity[column]) / 2);
+        const record = result.get(dateKey);
 
-        result.set(dateKey, newAvg);
+        record.data = ((record.data + activity[column]) / 2);
+        record.dates.push(date);
+
+        result.set(dateKey, record);
       });
 
       return result;
+    },
+    applyFillInDates: (state, getters) => (result, data, type) => {
+      const dates = data.map((e) => e.localDate.substr(0, 10));
+      const startDate = moment(dates.sort((lhs, rhs) => lhs > rhs)[0]);
+      const endDate = moment(dates.sort((lhs, rhs) => lhs < rhs)[0]);
+      let incrementDateBy;
+
+      if (type === 'Day') {
+        incrementDateBy = 'days';
+      } else if (type === 'Week') {
+        incrementDateBy = 'weeks';
+      } else if (type === 'Month') {
+        incrementDateBy = 'months';
+      } else if (type === 'Year') {
+        incrementDateBy = 'years';
+      }
+
+      while (endDate.diff(startDate, incrementDateBy) > -1) {
+        const dateKey = getters.getDateKey(endDate, type);
+        if (!result.has(dateKey)) {
+          result.set(dateKey, { data: 0, dates: [] });
+        }
+        endDate.add(-1, incrementDateBy);
+      }
     },
     getDateKey: () => (dateStr, type) => {
       const date = moment(dateStr);

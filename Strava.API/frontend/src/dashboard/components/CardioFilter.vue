@@ -72,6 +72,16 @@
             column
           }}</label>
         </div>
+        <div>
+          <input
+            type="checkbox"
+            :id="'advancedSearch' + ucid + 'FillInDates'"
+            v-model="fillInDates"
+          />
+          <label :for="'advancedSearch' + ucid + 'FillInDates'">
+            Fill in Dates
+          </label>
+        </div>
       </div>
     </div>
   </div>
@@ -95,6 +105,7 @@ export default {
       selectedGroupByDate: this.groupByDate,
       selectedFromDate: this.fromDate,
       selectedThroughDate: this.throughDate,
+      fillInDates: false,
       advancedSearch: {
         show: false,
         selectedColumnsToGraph: this.columnsToGraph,
@@ -115,6 +126,7 @@ export default {
         fromDate: this.selectedFromDate,
         throughDate: this.selectedThroughDate,
         columnsToGraph: this.advancedSearch.selectedColumnsToGraph,
+        fillInDates: this.fillInDates,
       });
     },
   },
