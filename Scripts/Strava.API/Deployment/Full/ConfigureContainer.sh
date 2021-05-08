@@ -6,7 +6,7 @@ echo "Updating Container and adding required programs"
 echo "deb [trusted=yes] https://nginx.org/packages/ubuntu/ focal nginx" | tee -a /etc/apt/sources.list
 echo "deb-src [trusted=yes] https://nginx.org/packages/ubuntu/ focal  nginx" | tee -a /etc/apt/sources.list
 apt-get update
-apt-get -y install nano wget curl zip nginx
+apt-get -y install nano wget curl zip nginx=1.18.0-2~focal
 
 wget https://dot.net/v1/dotnet-install.sh
 bash ./dotnet-install.sh -c Current -version latest --install-dir /usr/share/dotnet  --runtime dotnet
@@ -15,6 +15,7 @@ echo "Unzipping Deployment"
 mkdir $DeployToWWWLocation
 unzip -q /Deployment.zip -d $DeployToLocation/
 echo 'Setting up nginx'
+echo 'You may need to include include /etc/nginx/sites-enabled/*; in /etc/nginx/nginx.conf '
 
 service nginx start
 

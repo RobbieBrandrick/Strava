@@ -1,6 +1,7 @@
 Instance=$1
-ScriptFolder=/home/rob/storage/dev/Strava/Scripts/Strava.API/Deployment
-ProjectLocation=/home/rob/storage/dev/Strava/Strava.API
+RootFolder=$2
+ScriptFolder=$RootFolder/Scripts/Strava.API/Deployment/Full
+ProjectLocation=$RootFolder/Strava.API
 DeployFromLocation=$ProjectLocation/Deployment
 DeploymentPackage=$ProjectLocation/Deployment.zip
 DeployToWWWLocation=/var/www

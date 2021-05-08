@@ -1,1 +1,0 @@
-./DeployToLXC.sh do:StravaAPI
