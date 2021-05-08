@@ -52,5 +52,9 @@ I set this process up as a cron job to automatically import my data into my spre
 
 This project uses the database populated by Strava.ImportToDatabase to expose the data via a Web API to a hosted frontend application that contains charts and graphs of your Strava activities.
 
+Check it out: https://strava.robbiebrandrick.com
+
 ### Setup in LXD container
+
+The scripts can be found here: /Scripts/Strava.API/Deployment
 
