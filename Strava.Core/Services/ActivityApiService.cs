@@ -41,7 +41,7 @@ namespace Strava.Core.Services
             if (activities.Any(e => string.IsNullOrWhiteSpace(e.id) || e.id == "0"))
             {
                 
-                throw new InvalidOperationException("Activity API Error: Activity Id is zero. Likely, too many requests were made");
+                throw new InvalidOperationException("Activity API Error: Activity Id is zero. Likely, too many requests were made or there is a token issue.");
                 
             }
 
@@ -53,7 +53,7 @@ namespace Strava.Core.Services
             List<ActivityDto> activityDtos = new List<ActivityDto>();
             List<ActivityDto> response;
             var pageIndex = 1;
-            var pageSize = 1;
+            var pageSize = 100;
 
             do
             {

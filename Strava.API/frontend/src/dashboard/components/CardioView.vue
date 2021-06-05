@@ -51,7 +51,7 @@ export default {
   data() {
     return {
       groupByDate: 'Week',
-      fromDate: moment({ year: moment().year(), month: '0', day: '1' }).format('YYYY-MM-DD'),
+      fromDate: moment().subtract(12, 'weeks').format('YYYY-MM-DD'),
       throughDate: null,
       columnsToGraph: ['distance', 'movingTime'],
       fillInDates: false,

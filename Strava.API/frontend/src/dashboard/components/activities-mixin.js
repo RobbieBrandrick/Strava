@@ -13,7 +13,7 @@ export default {
     }),
   },
   methods: {
-    ...mapActions('activities', ['get']),
+    ...mapActions('activities', ['get', 'refreshActivities']),
     ...mapGetters('activities', {
       formatActivities: 'formatActivities',
       groupBy: 'groupByDate',

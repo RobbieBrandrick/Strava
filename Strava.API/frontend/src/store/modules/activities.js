@@ -34,17 +34,17 @@ export default {
       return activities;
     },
     formatTime: (state, getters) => (data) => `${getters.formatHours(data)}:${getters.formatMinutes(data)}:${getters.formatSeconds(data)}`,
-    formatHours: () => (data) => Math.round((data / 60 / 60)).toString().padStart(2, '0'),
+    formatHours: () => (data) => Math.round(Math.floor(((data / 60) / 60)) % 60).toString().padStart(2, '0'),
     formatMinutes: () => (data) => Math.round((data / 60) % 60).toString().padStart(2, '0'),
     formatSeconds: () => (data) => Math.round(data % 60).toString().padStart(2, '0'),
-    formatDistance: () => (data) => `${(data / 1000).toFixed(2)} km`,
-    formatRideSpeed: () => (data) => `${(data * 3.6).toFixed(2)} km/h`,
+    formatDistance: () => (data) => `${(data / 1000).toFixed(2)} `,
+    formatRideSpeed: () => (data) => `${(data * 3.6).toFixed(2).padStart(5, '0')}`,
     formatRunSpeed: () => (data) => {
       if (data === 0) {
         return '-';
       }
 
-      return `${(16.666666667 / data).toFixed(2)} /km`;
+      return `${(16.666666667 / data).toFixed(2)}`;
     },
     formatSpeed: (state, getters) => (data, type) => {
       if (type === 'Run') {
@@ -55,7 +55,7 @@ export default {
       }
       return data;
     },
-    formatElevation: () => (data) => `${Math.round(data, 2).toFixed(2)} m`,
+    formatElevation: () => (data) => `${Math.round(data, 2).toFixed(2).toString().padStart(6, '0')}`,
     groupByDate: (state, getters) => (data, type, column, fillInDates) => {
       const averageColumns = ['maxSpeed', 'averageSpeed'];
 
@@ -171,6 +171,13 @@ export default {
         data.splice(i, 1);
       });
     },
+    clearActivities(state) {
+      const { data } = state;
+
+      localStorage.removeItem('activities');
+
+      data.splice(0);
+    },
     setActivityTypes(state, activityTypes) {
       const { types } = state;
 
@@ -225,6 +232,10 @@ export default {
           commit('setActivitiesError', false);
         })
         .finally(() => { commit('setActivitiesLoading', false); });
+    },
+    refreshActivities({ commit, dispatch }) {
+      commit('clearActivities');
+      dispatch('get');
     },
   },
 };
