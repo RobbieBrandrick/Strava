@@ -2,19 +2,19 @@
   <div class="card">
     <div class="card-header"><slot /></div>
     <div class="card-body">
-      <CardioFilter
+      <ActivityChartViewFilter
         :groupByDate="groupByDate"
         :fromDate="fromDate"
         :throughDate="throughDate"
         :columnsToGraph="columnsToGraph"
         @filterUpdated="filterUpdated"
       />
-      <CardioGraph
+      <ActivityChartViewGraph
         :fromDate="selectedFromDate"
         :throughDate="selectedThroughDate"
         :type="type"
       />
-      <CardioChart
+      <ActivityChartView
         :groupByDate="groupByDate"
         :fromDate="fromDate"
         :throughDate="throughDate"
@@ -30,30 +30,31 @@
 <script>
 import moment from 'moment';
 
-import ucid from '../../mixins/ucid';
-import getActivitiesMixin from './activities-mixin';
+import ucid from '@/mixins/ucid';
+import ActivitiesMixIn from '@/mixins/activities-mixin';
 
-import CardioFilter from './CardioFilter.vue';
-import CardioChart from './CardioChart.vue';
-import CardioGraph from './CardioGraph.vue';
+import ActivityChartViewFilter from './ActivityChartViewFilter.vue';
+import ActivityChartView from './ActivityChartView.vue';
+import ActivityChartViewGraph from './ActivityChartViewGraph.vue';
 
 export default {
-  name: 'CardioView',
-  mixins: [ucid, getActivitiesMixin],
+  name: 'ActivityChartComponent',
+  mixins: [ucid, ActivitiesMixIn],
   components: {
-    CardioFilter,
-    CardioChart,
-    CardioGraph,
+    ActivityChartViewFilter,
+    ActivityChartView,
+    ActivityChartViewGraph,
   },
   props: {
     type: String,
+    columns: Array,
   },
   data() {
     return {
       groupByDate: 'Week',
       fromDate: moment().subtract(12, 'weeks').format('YYYY-MM-DD'),
       throughDate: null,
-      columnsToGraph: ['distance', 'movingTime'],
+      columnsToGraph: this.columns,
       fillInDates: false,
       chartSelectedFromDate: null,
       chartSelectedThroughDate: null,

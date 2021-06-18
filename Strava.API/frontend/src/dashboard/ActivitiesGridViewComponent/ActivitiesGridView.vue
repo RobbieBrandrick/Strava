@@ -12,13 +12,13 @@
       <section v-else>
         <div v-if="loading">Loading...</div>
 
-        <form id="search">
-          <div class="form-row">
-            <div class="form-group col-md-3">
+        <div class="mb-2">
+          <div class="row">
+            <div class="col-md-3">
               <label for="activityType">Type</label>
               <select
                 id="activityType"
-                class="form-control"
+                class="form-select"
                 v-model="selectedType"
               >
                 <option :selected="true">All</option>
@@ -28,7 +28,7 @@
               </select>
             </div>
 
-            <div class="form-group col-md-3">
+            <div class="col-md-3">
               <label for="activityFromDate">From Date</label>
               <input
                 id="activityFromDate"
@@ -40,7 +40,7 @@
               />
             </div>
 
-            <div class="form-group col-md-3">
+            <div class="col-md-3">
               <label for="activityThroughDate">Through Date</label>
               <input
                 id="activityThroughDate"
@@ -52,24 +52,27 @@
               />
             </div>
           </div>
-        </form>
+        </div>
 
-        <GridView :data="filteredActivities" :columns="columns" />
+        <div class="mb-2">
+          <GridView :data="filteredActivities" :columns="columns" />
+        </div>
       </section>
     </div>
   </div>
 </template>
 
 <script>
-import GridView from './GridView.vue';
-import getActivitiesMixin from './activities-mixin';
+import ActivitiesMixIn from '@/mixins/activities-mixin';
+import GridView from '@/dashboard/components/GridView.vue';
+import ActivityFormatters from '@/helpers/activityFormatters';
 
 export default {
   name: 'ActivitiesGridView',
   components: {
     GridView,
   },
-  mixins: [getActivitiesMixin],
+  mixins: [ActivitiesMixIn],
   data() {
     return {
       columns: ['id', 'type', 'name', 'localDate', 'utcDate', 'timezone', 'movingTime', 'elapsedTime', 'distance', 'averageSpeed', 'maxSpeed', 'elevationGain', 'elevationHigh', 'elevationLow'],
@@ -94,7 +97,7 @@ export default {
         activities = activities.filter((activity) => activity.localDate.substr(0, 10) <= this.throughDate);
       }
 
-      return this.formatActivities()(activities);
+      return ActivityFormatters.formatActivities(activities);
     },
   },
 };

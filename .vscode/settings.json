@@ -1,0 +1,9 @@
+{
+    "git.ignoreLimitWarning": true,
+    "vetur.format.defaultFormatter.js": "prettier-eslint",
+    "editor.tabSize": 2,
+    "javascript.preferences.quoteStyle": "single",
+    "eslint.workingDirectories": [
+        "./frontend"
+    ]    
+}

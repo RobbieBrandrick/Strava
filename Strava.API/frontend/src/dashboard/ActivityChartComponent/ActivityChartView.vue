@@ -1,18 +1,22 @@
 <template>
   <div>
     <button @click="afterSelectedChartLabel">Refresh</button>
-    <ChartView :chartData="renderChart" />
+    <div class="card mt-2">
+      <ChartView :chartData="renderChart" />
+    </div>
   </div>
 </template>
 
 <script>
 import ucid from '@/mixins/ucid';
 import ChartView from '@/dashboard/components/ChartView.vue';
-import getActivitiesMixin from '@/dashboard/components/activities-mixin';
+import ActivitiesMixIn from '@/mixins/activities-mixin';
+import ActivityFormatters from '@/helpers/activityFormatters';
+import ActivityChartHelper from '@/helpers/activityChartHelper';
 
 export default {
-  name: 'CardioChart',
-  mixins: [ucid, getActivitiesMixin],
+  name: 'ActivityChartView',
+  mixins: [ucid, ActivitiesMixIn],
   components: {
     ChartView,
   },
@@ -51,7 +55,7 @@ export default {
 
       for (let i = 0; i < this.columnsToGraph.length; i += 1) {
         const column = this.columnsToGraph[i];
-        const group = this.groupBy()(activitiesResult, this.groupByDate, column, this.fillInDates);
+        const group = ActivityChartHelper.groupByDate(activitiesResult, this.groupByDate, column, this.fillInDates);
 
         const columnDates = [...group.keys()];
         const columnData = [...group.values()].map((e) => e.data);
@@ -73,10 +77,10 @@ export default {
           labels: [...dates],
           datasets: chartData,
           cardioType: this.type,
-          formatTime: this.formatTime(),
-          formatDistance: this.formatDistance(),
-          formatSpeed: this.formatSpeed(),
-          formatElevation: this.formatElevation(),
+          formatTime: ActivityFormatters.formatTime,
+          formatDistance: ActivityFormatters.formatDistance,
+          formatSpeed: ActivityFormatters.formatSpeed,
+          formatElevation: ActivityFormatters.formatElevation,
           selectedChartLabel: this.selectedChartLabel,
           afterSelectedChartLabel: this.afterSelectedChartLabel,
         },

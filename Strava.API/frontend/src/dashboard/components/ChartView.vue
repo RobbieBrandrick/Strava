@@ -6,7 +6,7 @@
 
 <script>
 import Chart from 'chart.js';
-import ucid from '../../mixins/ucid';
+import ucid from '@/mixins/ucid';
 
 export default {
   name: 'ChartView',

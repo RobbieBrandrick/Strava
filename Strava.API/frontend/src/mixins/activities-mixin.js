@@ -14,13 +14,6 @@ export default {
   },
   methods: {
     ...mapActions('activities', ['get', 'refreshActivities']),
-    ...mapGetters('activities', {
-      formatActivities: 'formatActivities',
-      groupBy: 'groupByDate',
-      formatTime: 'formatTime',
-      formatDistance: 'formatDistance',
-      formatSpeed: 'formatSpeed',
-      formatElevation: 'formatElevation',
-    }),
+    ...mapGetters('activities', {}),
   },
 };

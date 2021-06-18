@@ -1,30 +1,33 @@
 <template>
-  <div>
+  <div class="card mt-2 mb-2 p-2">
     <table class="table">
       <thead>
-        <td>Time</td>
-        <td>Distance</td>
-        <td>Elev Gain</td>
-        <td>Efforts</td>
+        <tr>
+          <th scope="col">Time</th>
+          <th scope="col">Distance</th>
+          <th scope="col">Elev Gain</th>
+          <th scope="col">Efforts</th>
+        </tr>
       </thead>
       <tbody>
-        <td>
-          {{ graphData.time }}
-        </td>
-        <td>{{ graphData.distance }}</td>
-        <td>{{ graphData.elevation }}</td>
-        <td>{{ graphData.efforts }}</td>
+        <tr>
+          <td>{{ graphData.time }}</td>
+          <td>{{ graphData.distance }}</td>
+          <td>{{ graphData.elevation }}</td>
+          <td>{{ graphData.efforts }}</td>
+        </tr>
       </tbody>
     </table>
   </div>
 </template>
 
 <script>
-import getActivitiesMixin from './activities-mixin';
+import ActivitiesMixIn from '@/mixins/activities-mixin';
+import ActivityFormatters from '@/helpers/activityFormatters';
 
 export default {
-  name: 'CardioGraph',
-  mixins: [getActivitiesMixin],
+  name: 'ActivityChartViewGraph',
+  mixins: [ActivitiesMixIn],
   props: {
     fromDate: String,
     throughDate: String,
@@ -51,19 +54,19 @@ export default {
         .map((e) => e.movingTime)
         .reduce((previousValue, currentValue) => previousValue + currentValue, 0);
 
-      time = this.formatTime()(time);
+      time = ActivityFormatters.formatTime(time);
 
       let distance = result
         .map((e) => e.distance)
         .reduce((previousValue, currentValue) => previousValue + currentValue, 0);
 
-      distance = this.formatDistance()(distance);
+      distance = ActivityFormatters.formatDistance(distance);
 
       let elevation = result
         .map((e) => e.elevationGain)
         .reduce((previousValue, currentValue) => previousValue + currentValue, 0);
 
-      elevation = this.formatElevation()(elevation);
+      elevation = ActivityFormatters.formatElevation(elevation);
 
       const efforts = result
         .length;
