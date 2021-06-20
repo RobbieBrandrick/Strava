@@ -8,7 +8,6 @@
 </template>
 
 <script>
-import ucid from '@/mixins/ucid';
 import ChartView from '@/dashboard/components/ChartView.vue';
 import ActivitiesMixIn from '@/mixins/activities-mixin';
 import ActivityFormatters from '@/helpers/activityFormatters';
@@ -16,7 +15,7 @@ import ActivityChartHelper from '@/helpers/activityChartHelper';
 
 export default {
   name: 'ActivityChartView',
-  mixins: [ucid, ActivitiesMixIn],
+  mixins: [ActivitiesMixIn],
   components: {
     ChartView,
   },

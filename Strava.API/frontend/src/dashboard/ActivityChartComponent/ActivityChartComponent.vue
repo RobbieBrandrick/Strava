@@ -30,7 +30,6 @@
 <script>
 import moment from 'moment';
 
-import ucid from '@/mixins/ucid';
 import ActivitiesMixIn from '@/mixins/activities-mixin';
 
 import ActivityChartViewFilter from './ActivityChartViewFilter.vue';
@@ -39,7 +38,7 @@ import ActivityChartViewGraph from './ActivityChartViewGraph.vue';
 
 export default {
   name: 'ActivityChartComponent',
-  mixins: [ucid, ActivitiesMixIn],
+  mixins: [ActivitiesMixIn],
   components: {
     ActivityChartViewFilter,
     ActivityChartView,
