@@ -1,29 +1,26 @@
 <template>
   <div class="card">
-    <div class="card-header"><slot /></div>
-    <div class="card-body">
-      <ActivityChartViewFilter
-        :groupByDate="groupByDate"
-        :fromDate="fromDate"
-        :throughDate="throughDate"
-        :columnsToGraph="columnsToGraph"
-        @filterUpdated="filterUpdated"
-      />
-      <ActivityChartViewGraph
-        :fromDate="selectedFromDate"
-        :throughDate="selectedThroughDate"
-        :type="type"
-      />
-      <ActivityChartView
-        :groupByDate="groupByDate"
-        :fromDate="fromDate"
-        :throughDate="throughDate"
-        :columnsToGraph="columnsToGraph"
-        :fillInDates="fillInDates"
-        :type="type"
-        @chartLabelHoverChange="chartLabelHoverChange"
-      />
-    </div>
+    <ActivityChartViewFilter
+      :groupByDate="groupByDate"
+      :fromDate="fromDate"
+      :throughDate="throughDate"
+      :columnsToGraph="columnsToGraph"
+      @filterUpdated="filterUpdated"
+    />
+    <ActivityChartViewGraph
+      :fromDate="selectedFromDate"
+      :throughDate="selectedThroughDate"
+      :type="type"
+    />
+    <ActivityChartView
+      :groupByDate="groupByDate"
+      :fromDate="fromDate"
+      :throughDate="throughDate"
+      :columnsToGraph="columnsToGraph"
+      :fillInDates="fillInDates"
+      :type="type"
+      @chartLabelHoverChange="chartLabelHoverChange"
+    />
   </div>
 </template>
 

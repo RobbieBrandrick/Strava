@@ -1,17 +1,7 @@
 <template>
   <div>
     <div class="d-flex flex-row mb-3">
-      <h4 class="pe-2">Average</h4>
-      <label class="col-form-label pe-2">Weeks</label>
-      <select class="form-select" v-model="weeks">
-        <option
-          v-for="week in this.getWeeksFilter()"
-          :key="week"
-          v-bind:value="week"
-        >
-          {{ week }}
-        </option>
-      </select>
+      <h4 class="pe-2">Year to date</h4>
     </div>
     <hr />
     <table class="table table-sm">
@@ -42,20 +32,15 @@ import ActivitiesMixIn from '@/mixins/activities-mixin';
 import ActivityFormatters from '@/helpers/activityFormatters';
 
 export default {
-  name: 'AverageStatisticsComponent',
+  name: 'YearToDateStatisticsComponent',
   mixins: [ActivitiesMixIn],
   props: {
     type: String,
   },
-  data() {
-    return {
-      weeks: 4,
-    };
-  },
   computed: {
     data() {
       const { activities } = this;
-      const fromDate = moment().subtract(this.weeks, 'weeks').format('YYYY-MM-DD');
+      const fromDate = moment().startOf('year').format('YYYY-MM-DD');
       const throughDate = moment().format('YYYY-MM-DD');
 
       let activitiesResult = activities.filter((e) => e.type === this.type);
@@ -72,10 +57,10 @@ export default {
         );
       }
 
-      const efforts = ActivityFormatters.formatEfforts(activitiesResult.length / this.weeks);
-      const time = ActivityFormatters.formatTime(activitiesResult.reduce((a, e) => a + e.movingTime, 0) / this.weeks);
-      const distance = ActivityFormatters.formatDistance(activitiesResult.reduce((a, e) => a + e.distance, 0) / this.weeks);
-      const elevationGain = ActivityFormatters.formatElevation(activitiesResult.reduce((a, e) => a + e.elevationGain, 0) / this.weeks);
+      const efforts = ActivityFormatters.formatEfforts(activitiesResult.length);
+      const time = ActivityFormatters.formatTime(activitiesResult.reduce((a, e) => a + e.movingTime, 0));
+      const distance = ActivityFormatters.formatDistance(activitiesResult.reduce((a, e) => a + e.distance, 0));
+      const elevationGain = ActivityFormatters.formatElevation(activitiesResult.reduce((a, e) => a + e.elevationGain, 0));
 
       return {
         efforts,
@@ -83,17 +68,6 @@ export default {
         distance,
         elevationGain,
       };
-    },
-  },
-  methods: {
-    getWeeksFilter() {
-      const result = [];
-
-      for (let i = 4; i <= 52; i += 4) {
-        result.push(i);
-      }
-
-      return result;
     },
   },
 };

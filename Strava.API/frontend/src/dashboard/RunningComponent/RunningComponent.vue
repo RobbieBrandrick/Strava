@@ -1,10 +1,18 @@
 <template id="RunningComponent">
-  <div class="row">
-    <div class="col-xl-8">
-      <ActivityChartComponent type="Run" v-bind:columns="['distance', 'movingTime']">Running Chart</ActivityChartComponent>
-    </div>
-    <div class="col-xl-4">
-      <ActivityStatisticsComponents type="Run"/>
+  <div class="card">
+    <div class="card-header">Running</div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-xl-8">
+          <ActivityChartComponent
+            type="Run"
+            v-bind:columns="['distance', 'movingTime']"
+          />
+        </div>
+        <div class="col-xl-4">
+          <ActivityStatisticsComponents type="Run" />
+        </div>
+      </div>
     </div>
   </div>
 </template>

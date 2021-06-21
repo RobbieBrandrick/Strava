@@ -20,6 +20,9 @@ const activityFormatter = {
   formatElevation(data) {
     return `${Math.round(data, 2).toFixed(2).toString().padStart(6, '0')}`;
   },
+  formatEfforts(data) {
+    return Math.round(data).toString();
+  },
   formatRunSpeed(data) {
     if (data === 0) {
       return '-';
