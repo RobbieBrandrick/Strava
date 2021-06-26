@@ -1,4 +1,4 @@
-<template id="RidingComponent">
+<template id="WeightTrainingComponent">
   <div class="card">
     <div class="card-header" @click="show = !show">
       <div class="row">
@@ -7,7 +7,7 @@
           <i class="bi bi-arrows-expand" v-show="!this.show"></i>
         </div>
         <div class="col">
-          <h2 class="text-center">Cycling</h2>
+          <h2 class="text-center">Yogi</h2>
         </div>
         <div class="col fs-2">
           <i class="bi bi-arrows-collapse float-end" v-show="this.show"></i>
@@ -33,15 +33,15 @@ import ActivityChartComponent from '@/dashboard/ActivityChartComponent/ActivityC
 import ActivityStatisticsComponents from '@/dashboard/ActivityStatisticsComponent/ActivityStatisticsComponent.vue';
 
 export default {
-  name: 'RidingComponent',
+  name: 'WeightTrainingComponent',
   components: {
     ActivityChartComponent,
     ActivityStatisticsComponents,
   },
   data() {
     return {
-      type: 'Ride',
-      columns: ['distance', 'movingTime'],
+      type: 'Yoga',
+      columns: ['efforts'],
       show: false,
     };
   },

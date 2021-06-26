@@ -1,6 +1,20 @@
 <template>
   <div class="card">
-    <div class="card-header" @click="show = !show">Modify Activities</div>
+    <div class="card-header" @click="show = !show">
+      <div class="row">
+        <div class="col fs-2">
+          <i class="bi bi-arrows-collapse" v-show="this.show"></i>
+          <i class="bi bi-arrows-expand" v-show="!this.show"></i>
+        </div>
+        <div class="col">
+          <h2 class="text-center">Modify Activities</h2>
+        </div>
+        <div class="col fs-2">
+          <i class="bi bi-arrows-collapse float-end" v-show="this.show"></i>
+          <i class="bi bi-arrows-expand float-end" v-show="!this.show"></i>
+        </div>
+      </div>
+    </div>
     <div class="card-body" v-show="show">
       <div class="mb-4 col-md-3">
         <label for="activityType">Type</label>

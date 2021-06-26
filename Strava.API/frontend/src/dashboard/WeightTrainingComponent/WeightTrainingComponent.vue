@@ -1,16 +1,27 @@
 <template id="WeightTrainingComponent">
   <div class="card">
-    <div class="card-header">Weight Training</div>
-    <div class="card-body">
+    <div class="card-header" @click="show = !show">
+      <div class="row">
+        <div class="col fs-2">
+          <i class="bi bi-arrows-collapse" v-show="this.show"></i>
+          <i class="bi bi-arrows-expand" v-show="!this.show"></i>
+        </div>
+        <div class="col">
+          <h2 class="text-center">Weight Training</h2>
+        </div>
+        <div class="col fs-2">
+          <i class="bi bi-arrows-collapse float-end" v-show="this.show"></i>
+          <i class="bi bi-arrows-expand float-end" v-show="!this.show"></i>
+        </div>
+      </div>
+    </div>
+    <div class="card-body" v-show="show">
       <div class="row">
         <div class="col-xl-8">
-          <ActivityChartComponent
-            type="WeightTraining"
-            v-bind:columns="['efforts']"
-          />
+          <ActivityChartComponent :type="type" v-bind:columns="columns" />
         </div>
         <div class="col-xl-4">
-          <ActivityStatisticsComponents type="WeightTraining" />
+          <ActivityStatisticsComponents :type="type" />
         </div>
       </div>
     </div>
@@ -26,6 +37,13 @@ export default {
   components: {
     ActivityChartComponent,
     ActivityStatisticsComponents,
+  },
+  data() {
+    return {
+      type: 'WeightTraining',
+      columns: ['efforts'],
+      show: false,
+    };
   },
 };
 </script>

@@ -1,7 +1,21 @@
-<template>
-  <div id="activitiesGrid" class="card">
-    <div class="card-header font-weight-bold">Review your activities</div>
-    <div class="card-body">
+<template id="ActivitiesGridComponent">
+  <div class="card">
+    <div class="card-header" @click="show = !show">
+      <div class="row">
+        <div class="col fs-2">
+          <i class="bi bi-arrows-collapse" v-show="this.show"></i>
+          <i class="bi bi-arrows-expand" v-show="!this.show"></i>
+        </div>
+        <div class="col">
+          <h2 class="text-center">Review your activities</h2>
+        </div>
+        <div class="col fs-2">
+          <i class="bi bi-arrows-collapse float-end" v-show="this.show"></i>
+          <i class="bi bi-arrows-expand float-end" v-show="!this.show"></i>
+        </div>
+      </div>
+    </div>
+    <div class="card-body" v-show="show">
       <section v-if="error">
         <p>
           We're sorry, we're not able to retrieve this information at the
@@ -79,6 +93,7 @@ export default {
       selectedType: 'All',
       fromDate: null,
       throughDate: null,
+      show: false,
     };
   },
   computed: {
