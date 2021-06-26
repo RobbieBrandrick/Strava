@@ -78,6 +78,15 @@ namespace Strava.Core.Services
             
             DateTime? after = await GetLatestStartDate();
 
+            if (after.HasValue)
+            {
+                
+                //Lets grab the latest start date minus 7 days just in case a record was added before the latest date,
+                //which happens when I forget to add an entry
+                after = after.Value.AddDays(-7);
+                
+            }
+
             if (refreshCache)
             {
                 after = null;
